@@ -1,3 +1,9 @@
+import os
+import sys
+
+# Ensure the src directory is in the Python path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from src.tables.worker_table import WorkerTable
 
 def display_menu():
@@ -23,6 +29,8 @@ def add_worker(worker_table):
         print("Worker added successfully!")
     except ValueError as e:
         print(f"Invalid input: {e}")
+    except Exception as e:
+        print(f"Error adding worker: {e}")
 
 def edit_worker(worker_table):
     """Edit an existing worker's information."""
@@ -57,6 +65,8 @@ def edit_worker(worker_table):
             print("No changes were made.")
     except ValueError as e:
         print(f"Invalid input: {e}")
+    except Exception as e:
+        print(f"Error updating worker: {e}")
 
 def delete_worker(worker_table):
     """Delete a worker from the table."""
@@ -66,16 +76,21 @@ def delete_worker(worker_table):
         print("Worker deleted successfully!")
     except ValueError as e:
         print(f"Invalid input: {e}")
+    except Exception as e:
+        print(f"Error deleting worker: {e}")
 
 def view_workers(worker_table):
     """View all workers in the table."""
-    workers = worker_table.select_all()
-    if workers:
-        print("\nWorkers in the table:")
-        for worker in workers:
-            print(worker)
-    else:
-        print("No workers found.")
+    try:
+        workers = worker_table.select_all()
+        if workers:
+            print("\nWorkers in the table:")
+            for worker in workers:
+                print(worker)
+        else:
+            print("No workers found.")
+    except Exception as e:
+        print(f"Error retrieving workers: {e}")
 
 def main():
     worker_table = WorkerTable()
