@@ -2,45 +2,39 @@ import os
 import sys
 import psycopg2
 
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from src.db_engine import DBEngine
-
 class SMResponsibilitiesTable:
     def __init__(self):
         self.db_engine = DBEngine()
-        self.table_name = '"SMResponsibilities"'
+        self.table_name = '"SM Responsibilities"'
+        self.create_table()
 
     def create_table(self):
         create_table_query = '''
-        CREATE TABLE IF NOT EXISTS "SMResponsibilities" (
-            "ResponsibilityID" SERIAL PRIMARY KEY,
-            "SMID" INT NOT NULL,
-            "ResponsibilityDescription" TEXT NOT NULL,
-            FOREIGN KEY ("SMID") REFERENCES "StoreManager" ("StoreManagerID")
+        CREATE TABLE IF NOT EXISTS "SM Responsibilities" (
+            "SMResponsibilityID" INT NOT NULL,
+            "ResponsibilityID" INT NOT NULL,
+            "StoreManagerID" INT NOT NULL,
+            PRIMARY KEY ("SMResponsibilityID")
         );
         '''
         self._execute_query(create_table_query)
 
     def insert_data(self, data):
         insert_query = '''
-        INSERT INTO "SMResponsibilities" ("SMID", "ResponsibilityDescription")
-        VALUES (%s, %s);
+        INSERT INTO "SM Responsibilities" ("SMResponsibilityID", "ResponsibilityID", "StoreManagerID")
+        VALUES (%s, %s, %s);
         '''
         self._execute_query(insert_query, data)
 
-    def update_data(self, responsibility_id, new_values):
-        set_clause = ', '.join([f'"{key}" = %s' for key in new_values.keys()])
-        update_query = f'UPDATE "SMResponsibilities" SET {set_clause} WHERE "ResponsibilityID" = %s'
-        values = list(new_values.values()) + [responsibility_id]
-        self._execute_query(update_query, values)
-
-    def delete_data(self, responsibility_id):
-        delete_query = 'DELETE FROM "SMResponsibilities" WHERE "ResponsibilityID" = %s'
-        self._execute_query(delete_query, (responsibility_id,))
+    def delete_data(self, sm_responsibility_id):
+        delete_query = 'DELETE FROM "SM Responsibilities" WHERE "SMResponsibilityID" = %s'
+        self._execute_query(delete_query, (sm_responsibility_id,))
 
     def select_all(self):
-        select_query = 'SELECT * FROM "SMResponsibilities"'
+        select_query = 'SELECT * FROM "SM Responsibilities"'
         self.db_engine.cursor.execute(select_query)
         return self.db_engine.cursor.fetchall()
 
@@ -55,82 +49,58 @@ class SMResponsibilitiesTable:
             self.db_engine.connection.rollback()
             print(f"Error executing query: {error}")
 
-    def add_responsibility(self):
+    def add_sm_responsibility(self):
         try:
-            sm_id = int(input("Enter store manager ID: "))
-            description = input("Enter responsibility description: ")
+            sm_responsibility_id = int(input("Enter store manager responsibility ID: "))
+            responsibility_id = int(input("Enter responsibility ID: "))
+            store_manager_id = int(input("Enter store manager ID: "))
 
-            self.insert_data((sm_id, description))
-            print("Responsibility added successfully!")
+            self.insert_data((sm_responsibility_id, responsibility_id, store_manager_id))
+            print("Store manager responsibility added successfully!")
         except ValueError as e:
             print(f"Invalid input: {e}")
         except Exception as e:
-            print(f"Error adding responsibility: {e}")
+            print(f"Error adding store manager responsibility: {e}")
 
-    def edit_responsibility(self):
+    def delete_sm_responsibility(self):
         try:
-            responsibility_id = int(input("Enter the Responsibility ID to edit: "))
-            sm_id = input("Enter new store manager ID (leave empty to keep current): ")
-            description = input("Enter new responsibility description (leave empty to keep current): ")
-
-            new_values = {}
-            if sm_id:
-                new_values['SMID'] = int(sm_id)
-            if description:
-                new_values['ResponsibilityDescription'] = description
-
-            if new_values:
-                self.update_data(responsibility_id, new_values)
-                print("Responsibility updated successfully!")
-            else:
-                print("No changes were made.")
+            sm_responsibility_id = int(input("Enter the store manager responsibility ID to delete: "))
+            self.delete_data(sm_responsibility_id)
+            print("Store manager responsibility deleted successfully!")
         except ValueError as e:
             print(f"Invalid input: {e}")
         except Exception as e:
-            print(f"Error updating responsibility: {e}")
+            print(f"Error deleting store manager responsibility: {e}")
 
-    def delete_responsibility(self):
-        try:
-            responsibility_id = int(input("Enter the Responsibility ID to delete: "))
-            self.delete_data(responsibility_id)
-            print("Responsibility deleted successfully!")
-        except ValueError as e:
-            print(f"Invalid input: {e}")
-        except Exception as e:
-            print(f"Error deleting responsibility: {e}")
-
-    def view_responsibilities(self):
+    def view_sm_responsibilities(self):
         try:
             responsibilities = self.select_all()
             if responsibilities:
-                print("\nSM Responsibilities in the table:")
+                print("\nStore Manager Responsibilities:")
                 for responsibility in responsibilities:
                     print(responsibility)
             else:
-                print("No SM responsibilities found.")
+                print("No store manager responsibilities found.")
         except Exception as e:
-            print(f"Error retrieving SM responsibilities: {e}")
+            print(f"Error retrieving store manager responsibilities: {e}")
 
-    def manage_responsibilities(self):
+    def manage_sm_responsibilities(self):
         while True:
-            print("\nSM Responsibilities Management")
-            print("1. Add Responsibility")
-            print("2. Edit Responsibility")
-            print("3. Delete Responsibility")
-            print("4. View All Responsibilities")
-            print("5. Back")
+            print("\nStore Manager Responsibilities Management")
+            print("1. Add Store Manager Responsibility")
+            print("2. Delete Store Manager Responsibility")
+            print("3. View All Store Manager Responsibilities")
+            print("4. Back")
 
-            choice = input("Enter your choice (1-5): ")
+            choice = input("Enter your choice (1-4): ")
 
             if choice == '1':
-                self.add_responsibility()
+                self.add_sm_responsibility()
             elif choice == '2':
-                self.edit_responsibility()
+                self.delete_sm_responsibility()
             elif choice == '3':
-                self.delete_responsibility()
+                self.view_sm_responsibilities()
             elif choice == '4':
-                self.view_responsibilities()
-            elif choice == '5':
                 break
             else:
-                print("Invalid choice, please select between 1 and 5.")
+                print("Invalid choice, please select between 1 and 4.")

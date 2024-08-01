@@ -2,29 +2,33 @@ import os
 import sys
 import psycopg2
 
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from src.db_engine import DBEngine
-
 class StoreTable:
     def __init__(self):
         self.db_engine = DBEngine()
         self.table_name = '"Store"'
+        self.create_table()
 
     def create_table(self):
         create_table_query = '''
         CREATE TABLE IF NOT EXISTS "Store" (
             "StoreID" SERIAL PRIMARY KEY,
             "StoreName" VARCHAR(255) NOT NULL,
-            "Location" VARCHAR(255) NOT NULL
+            "StoreManagerID" INT NOT NULL,
+            "ManagerID" INT NOT NULL,
+            "WorkerID" INT NOT NULL,
+            "FoodStorageID" INT NOT NULL,
+            "DryStoreID" INT NOT NULL
         );
         '''
         self._execute_query(create_table_query)
 
     def insert_data(self, data):
         insert_query = '''
-        INSERT INTO "Store" ("StoreName", "Location")
-        VALUES (%s, %s);
+        INSERT INTO "Store" ("StoreName", "StoreManagerID", "ManagerID", "WorkerID", "FoodStorageID", "DryStoreID")
+        VALUES (%s, %s, %s, %s, %s, %s);
         '''
         self._execute_query(insert_query, data)
 
@@ -57,24 +61,42 @@ class StoreTable:
     def add_store(self):
         try:
             store_name = input("Enter store name: ")
-            location = input("Enter location: ")
+            store_manager_id = int(input("Enter store manager ID: "))
+            manager_id = int(input("Enter manager ID: "))
+            worker_id = int(input("Enter worker ID: "))
+            food_storage_id = int(input("Enter food storage ID: "))
+            dry_store_id = int(input("Enter dry store ID: "))
 
-            self.insert_data((store_name, location))
+            self.insert_data((store_name, store_manager_id, manager_id, worker_id, food_storage_id, dry_store_id))
             print("Store added successfully!")
+        except ValueError as e:
+            print(f"Invalid input: {e}")
         except Exception as e:
             print(f"Error adding store: {e}")
 
     def edit_store(self):
         try:
-            store_id = int(input("Enter the Store ID to edit: "))
+            store_id = int(input("Enter the store ID to edit: "))
             store_name = input("Enter new store name (leave empty to keep current): ")
-            location = input("Enter new location (leave empty to keep current): ")
+            store_manager_id = input("Enter new store manager ID (leave empty to keep current): ")
+            manager_id = input("Enter new manager ID (leave empty to keep current): ")
+            worker_id = input("Enter new worker ID (leave empty to keep current): ")
+            food_storage_id = input("Enter new food storage ID (leave empty to keep current): ")
+            dry_store_id = input("Enter new dry store ID (leave empty to keep current): ")
 
             new_values = {}
             if store_name:
                 new_values['StoreName'] = store_name
-            if location:
-                new_values['Location'] = location
+            if store_manager_id:
+                new_values['StoreManagerID'] = int(store_manager_id)
+            if manager_id:
+                new_values['ManagerID'] = int(manager_id)
+            if worker_id:
+                new_values['WorkerID'] = int(worker_id)
+            if food_storage_id:
+                new_values['FoodStorageID'] = int(food_storage_id)
+            if dry_store_id:
+                new_values['DryStoreID'] = int(dry_store_id)
 
             if new_values:
                 self.update_data(store_id, new_values)
@@ -88,7 +110,7 @@ class StoreTable:
 
     def delete_store(self):
         try:
-            store_id = int(input("Enter the Store ID to delete: "))
+            store_id = int(input("Enter the store ID to delete: "))
             self.delete_data(store_id)
             print("Store deleted successfully!")
         except ValueError as e:
@@ -100,7 +122,7 @@ class StoreTable:
         try:
             stores = self.select_all()
             if stores:
-                print("\nStores in the table:")
+                print("\nStores:")
                 for store in stores:
                     print(store)
             else:

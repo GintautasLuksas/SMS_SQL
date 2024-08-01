@@ -1,10 +1,9 @@
 import os
 import sys
 
-# Ensure the src directory is in the Python path
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# Import tables and their management functions
 from src.tables.worker_table import WorkerTable
 from src.tables.manager_table import ManagerTable
 from src.tables.store_manager_table import StoreManagerTable
@@ -92,7 +91,7 @@ def manage_sm_responsibilities():
 
 def manage_store():
     store_table = StoreTable()
-    store_table.manage_store()
+    store_table.manage_stores()
 
 def manage_store_dry_products():
     store_dry_product_table = StoreDryProductTable()

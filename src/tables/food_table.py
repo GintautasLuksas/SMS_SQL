@@ -1,31 +1,33 @@
 import os
 import sys
 import psycopg2
+from psycopg2 import sql
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from src.db_engine import DBEngine
-
 class FoodTable:
     def __init__(self):
         self.db_engine = DBEngine()
         self.table_name = '"Food"'
+        self.create_table()
 
     def create_table(self):
         create_table_query = '''
         CREATE TABLE IF NOT EXISTS "Food" (
             "FoodID" SERIAL PRIMARY KEY,
-            "ProductName" VARCHAR(255) NOT NULL,
-            "Quantity" INT NOT NULL,
-            "StoreID" INT NOT NULL
+            "Name" VARCHAR(255) NOT NULL,
+            "Amount" INT NOT NULL,
+            "Price" INT NOT NULL,
+            "StorageCondition" VARCHAR(255) NOT NULL,
+            "ExpiryDate" DATE NOT NULL
         );
         '''
         self._execute_query(create_table_query)
 
     def insert_data(self, data):
         insert_query = '''
-        INSERT INTO "Food" ("ProductName", "Quantity", "StoreID")
-        VALUES (%s, %s, %s);
+        INSERT INTO "Food" ("Name", "Amount", "Price", "StorageCondition", "ExpiryDate")
+        VALUES (%s, %s, %s, %s, %s);
         '''
         self._execute_query(insert_query, data)
 
@@ -57,11 +59,13 @@ class FoodTable:
 
     def add_food(self):
         try:
-            product_name = input("Enter product name: ")
-            quantity = int(input("Enter quantity: "))
-            store_id = int(input("Enter store ID: "))
+            name = input("Enter food name: ")
+            amount = int(input("Enter amount: "))
+            price = int(input("Enter price: "))
+            storage_condition = input("Enter storage condition: ")
+            expiry_date = input("Enter expiry date (YYYY-MM-DD): ")
 
-            self.insert_data((product_name, quantity, store_id))
+            self.insert_data((name, amount, price, storage_condition, expiry_date))
             print("Food item added successfully!")
         except ValueError as e:
             print(f"Invalid input: {e}")
@@ -70,18 +74,24 @@ class FoodTable:
 
     def edit_food(self):
         try:
-            food_id = int(input("Enter the Food ID to edit: "))
-            product_name = input("Enter new product name (leave empty to keep current): ")
-            quantity = input("Enter new quantity (leave empty to keep current): ")
-            store_id = input("Enter new store ID (leave empty to keep current): ")
+            food_id = int(input("Enter the food ID to edit: "))
+            name = input("Enter new name (leave empty to keep current): ")
+            amount = input("Enter new amount (leave empty to keep current): ")
+            price = input("Enter new price (leave empty to keep current): ")
+            storage_condition = input("Enter new storage condition (leave empty to keep current): ")
+            expiry_date = input("Enter new expiry date (leave empty to keep current): ")
 
             new_values = {}
-            if product_name:
-                new_values['ProductName'] = product_name
-            if quantity:
-                new_values['Quantity'] = int(quantity)
-            if store_id:
-                new_values['StoreID'] = int(store_id)
+            if name:
+                new_values['Name'] = name
+            if amount:
+                new_values['Amount'] = int(amount)
+            if price:
+                new_values['Price'] = int(price)
+            if storage_condition:
+                new_values['StorageCondition'] = storage_condition
+            if expiry_date:
+                new_values['ExpiryDate'] = expiry_date
 
             if new_values:
                 self.update_data(food_id, new_values)
@@ -95,7 +105,7 @@ class FoodTable:
 
     def delete_food(self):
         try:
-            food_id = int(input("Enter the Food ID to delete: "))
+            food_id = int(input("Enter the food ID to delete: "))
             self.delete_data(food_id)
             print("Food item deleted successfully!")
         except ValueError as e:
@@ -105,10 +115,10 @@ class FoodTable:
 
     def view_food(self):
         try:
-            food_items = self.select_all()
-            if food_items:
-                print("\nFood items in the table:")
-                for item in food_items:
+            items = self.select_all()
+            if items:
+                print("\nFood Items:")
+                for item in items:
                     print(item)
             else:
                 print("No food items found.")

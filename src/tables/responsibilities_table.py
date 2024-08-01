@@ -2,27 +2,28 @@ import os
 import sys
 import psycopg2
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.db_engine import DBEngine
 
 class ResponsibilitiesTable:
     def __init__(self):
         self.db_engine = DBEngine()
         self.table_name = '"Responsibilities"'
+        self.create_table()
 
     def create_table(self):
         create_table_query = '''
         CREATE TABLE IF NOT EXISTS "Responsibilities" (
             "ResponsibilityID" SERIAL PRIMARY KEY,
-            "Description" TEXT NOT NULL
+            "ResponsibilityName" VARCHAR(255) NOT NULL
         );
         '''
         self._execute_query(create_table_query)
 
     def insert_data(self, data):
         insert_query = '''
-        INSERT INTO "Responsibilities" ("Description")
+        INSERT INTO "Responsibilities" ("ResponsibilityName")
         VALUES (%s);
         '''
         self._execute_query(insert_query, data)
@@ -55,21 +56,21 @@ class ResponsibilitiesTable:
 
     def add_responsibility(self):
         try:
-            description = input("Enter responsibility description: ")
+            responsibility_name = input("Enter responsibility name: ")
 
-            self.insert_data((description,))
+            self.insert_data((responsibility_name,))
             print("Responsibility added successfully!")
         except Exception as e:
             print(f"Error adding responsibility: {e}")
 
     def edit_responsibility(self):
         try:
-            responsibility_id = int(input("Enter the Responsibility ID to edit: "))
-            description = input("Enter new responsibility description (leave empty to keep current): ")
+            responsibility_id = int(input("Enter the responsibility ID to edit: "))
+            responsibility_name = input("Enter new responsibility name (leave empty to keep current): ")
 
             new_values = {}
-            if description:
-                new_values['Description'] = description
+            if responsibility_name:
+                new_values['ResponsibilityName'] = responsibility_name
 
             if new_values:
                 self.update_data(responsibility_id, new_values)
@@ -83,7 +84,7 @@ class ResponsibilitiesTable:
 
     def delete_responsibility(self):
         try:
-            responsibility_id = int(input("Enter the Responsibility ID to delete: "))
+            responsibility_id = int(input("Enter the responsibility ID to delete: "))
             self.delete_data(responsibility_id)
             print("Responsibility deleted successfully!")
         except ValueError as e:
@@ -95,7 +96,7 @@ class ResponsibilitiesTable:
         try:
             responsibilities = self.select_all()
             if responsibilities:
-                print("\nResponsibilities in the table:")
+                print("\nResponsibilities:")
                 for responsibility in responsibilities:
                     print(responsibility)
             else:

@@ -1,12 +1,10 @@
 import os
 import sys
 import psycopg2
+from psycopg2 import sql
 
-# Ensure the src directory is in the Python path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from src.db_engine import DBEngine
-
 class ManagerTable:
     def __init__(self):
         self.db_engine = DBEngine()
@@ -20,10 +18,10 @@ class ManagerTable:
             "ManagerID" SERIAL PRIMARY KEY,
             "Name" VARCHAR(255) NOT NULL,
             "PhoneNumber" BIGINT NOT NULL,
-            "Email" VARCHAR(255) NOT NULL,
             "Country" VARCHAR(255) NOT NULL,
-            "HourlyRate" INT NOT NULL,
-            "AmountWorked" INT NOT NULL
+            "Email" VARCHAR(255) NOT NULL,
+            "MonthlySalary" INT NOT NULL,
+            "MGRResponibilityID" INT NOT NULL
         );
         '''
         self._execute_query(create_table_query)
@@ -31,7 +29,7 @@ class ManagerTable:
     def insert_data(self, data):
         """Insert a new manager into the table."""
         insert_query = '''
-        INSERT INTO "Manager" ("Name", "PhoneNumber", "Email", "Country", "HourlyRate", "AmountWorked")
+        INSERT INTO "Manager" ("Name", "PhoneNumber", "Country", "Email", "MonthlySalary", "MGRResponibilityID")
         VALUES (%s, %s, %s, %s, %s, %s);
         '''
         self._execute_query(insert_query, data)
@@ -71,12 +69,12 @@ class ManagerTable:
         try:
             name = input("Enter manager's name: ")
             phone_number = int(input("Enter manager's phone number: "))
-            email = input("Enter manager's email: ")
             country = input("Enter manager's country: ")
-            hourly_rate = int(input("Enter manager's hourly rate: "))
-            amount_worked = int(input("Enter amount worked: "))
+            email = input("Enter manager's email: ")
+            monthly_salary = int(input("Enter manager's monthly salary: "))
+            mgr_responsibility_id = int(input("Enter manager's responsibility ID: "))
 
-            self.insert_data((name, phone_number, email, country, hourly_rate, amount_worked))
+            self.insert_data((name, phone_number, country, email, monthly_salary, mgr_responsibility_id))
             print("Manager added successfully!")
         except ValueError as e:
             print(f"Invalid input: {e}")
@@ -89,10 +87,10 @@ class ManagerTable:
             manager_id = int(input("Enter the manager ID to edit: "))
             name = input("Enter new name (leave empty to keep current): ")
             phone_number = input("Enter new phone number (leave empty to keep current): ")
-            email = input("Enter new email (leave empty to keep current): ")
             country = input("Enter new country (leave empty to keep current): ")
-            hourly_rate = input("Enter new hourly rate (leave empty to keep current): ")
-            amount_worked = input("Enter new amount worked (leave empty to keep current): ")
+            email = input("Enter new email (leave empty to keep current): ")
+            monthly_salary = input("Enter new monthly salary (leave empty to keep current): ")
+            mgr_responsibility_id = input("Enter new responsibility ID (leave empty to keep current): ")
 
             # Collect only fields that are not empty
             new_values = {}
@@ -100,14 +98,14 @@ class ManagerTable:
                 new_values['Name'] = name
             if phone_number:
                 new_values['PhoneNumber'] = int(phone_number)
-            if email:
-                new_values['Email'] = email
             if country:
                 new_values['Country'] = country
-            if hourly_rate:
-                new_values['HourlyRate'] = int(hourly_rate)
-            if amount_worked:
-                new_values['AmountWorked'] = int(amount_worked)
+            if email:
+                new_values['Email'] = email
+            if monthly_salary:
+                new_values['MonthlySalary'] = int(monthly_salary)
+            if mgr_responsibility_id:
+                new_values['MGRResponibilityID'] = int(mgr_responsibility_id)
 
             if new_values:
                 self.update_data(manager_id, new_values)

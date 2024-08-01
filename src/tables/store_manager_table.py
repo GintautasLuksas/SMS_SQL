@@ -10,53 +10,42 @@ from src.db_engine import DBEngine
 class StoreManagerTable:
     def __init__(self):
         self.db_engine = DBEngine()
-        self.table_name = '"Store Manager"'  # Correctly use the table name with spaces
+        self.table_name = '"StoreManager"'
+        self.create_table()
 
     def create_table(self):
-        """Create the Store Manager table if it doesn't exist."""
         create_table_query = '''
-        CREATE TABLE IF NOT EXISTS "Store Manager" (
+        CREATE TABLE IF NOT EXISTS "StoreManager" (
             "StoreManagerID" SERIAL PRIMARY KEY,
-            "StoreID" INT NOT NULL,
-            "Name" VARCHAR(255) NOT NULL,
-            "Country" VARCHAR(255) NOT NULL,
-            "Email" VARCHAR(255) NOT NULL,
-            "PhoneNumber" BIGINT NOT NULL,
-            "SMResponsibilityID" INT NOT NULL,
-            "MonthlySalary" INT NOT NULL,
-            "PettyCash" INT NOT NULL
+            "ManagerID" INT NOT NULL,
+            "StoreID" INT NOT NULL
         );
         '''
         self._execute_query(create_table_query)
 
     def insert_data(self, data):
-        """Insert a new store manager into the table."""
         insert_query = '''
-        INSERT INTO "Store Manager" ("StoreID", "Name", "Country", "Email", "PhoneNumber", "SMResponsibilityID", "MonthlySalary", "PettyCash")
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+        INSERT INTO "StoreManager" ("ManagerID", "StoreID")
+        VALUES (%s, %s);
         '''
         self._execute_query(insert_query, data)
 
     def update_data(self, store_manager_id, new_values):
-        """Update an existing store manager's information."""
         set_clause = ', '.join([f'"{key}" = %s' for key in new_values.keys()])
-        update_query = f'UPDATE "Store Manager" SET {set_clause} WHERE "StoreManagerID" = %s'
+        update_query = f'UPDATE "StoreManager" SET {set_clause} WHERE "StoreManagerID" = %s'
         values = list(new_values.values()) + [store_manager_id]
         self._execute_query(update_query, values)
 
     def delete_data(self, store_manager_id):
-        """Delete a store manager from the table."""
-        delete_query = 'DELETE FROM "Store Manager" WHERE "StoreManagerID" = %s'
+        delete_query = 'DELETE FROM "StoreManager" WHERE "StoreManagerID" = %s'
         self._execute_query(delete_query, (store_manager_id,))
 
     def select_all(self):
-        """Select all store managers from the table."""
-        select_query = 'SELECT * FROM "Store Manager"'
+        select_query = 'SELECT * FROM "StoreManager"'
         self.db_engine.cursor.execute(select_query)
         return self.db_engine.cursor.fetchall()
 
     def _execute_query(self, query, params=None):
-        """Execute a query using the database engine's cursor."""
         try:
             if params:
                 self.db_engine.cursor.execute(query, params)
@@ -68,59 +57,32 @@ class StoreManagerTable:
             print(f"Error executing query: {error}")
 
     def add_store_manager(self):
-        """Add a new store manager to the table."""
         try:
+            manager_id = int(input("Enter manager ID: "))
             store_id = int(input("Enter store ID: "))
-            name = input("Enter store manager's name: ")
-            country = input("Enter store manager's country: ")
-            email = input("Enter store manager's email: ")
-            phone_number = int(input("Enter store manager's phone number: "))
-            sm_responsibility_id = int(input("Enter store manager's responsibility ID: "))
-            monthly_salary = int(input("Enter store manager's monthly salary: "))
-            petty_cash = int(input("Enter store manager's petty cash: "))
 
-            self.insert_data((store_id, name, country, email, phone_number, sm_responsibility_id, monthly_salary, petty_cash))
-            print("Store Manager added successfully!")
+            self.insert_data((manager_id, store_id))
+            print("Store manager added successfully!")
         except ValueError as e:
             print(f"Invalid input: {e}")
         except Exception as e:
             print(f"Error adding store manager: {e}")
 
     def edit_store_manager(self):
-        """Edit an existing store manager's information."""
         try:
             store_manager_id = int(input("Enter the store manager ID to edit: "))
+            manager_id = input("Enter new manager ID (leave empty to keep current): ")
             store_id = input("Enter new store ID (leave empty to keep current): ")
-            name = input("Enter new name (leave empty to keep current): ")
-            country = input("Enter new country (leave empty to keep current): ")
-            email = input("Enter new email (leave empty to keep current): ")
-            phone_number = input("Enter new phone number (leave empty to keep current): ")
-            sm_responsibility_id = input("Enter new responsibility ID (leave empty to keep current): ")
-            monthly_salary = input("Enter new monthly salary (leave empty to keep current): ")
-            petty_cash = input("Enter new petty cash (leave empty to keep current): ")
 
-            # Collect only fields that are not empty
             new_values = {}
+            if manager_id:
+                new_values['ManagerID'] = int(manager_id)
             if store_id:
                 new_values['StoreID'] = int(store_id)
-            if name:
-                new_values['Name'] = name
-            if country:
-                new_values['Country'] = country
-            if email:
-                new_values['Email'] = email
-            if phone_number:
-                new_values['PhoneNumber'] = int(phone_number)
-            if sm_responsibility_id:
-                new_values['SMResponsibilityID'] = int(sm_responsibility_id)
-            if monthly_salary:
-                new_values['MonthlySalary'] = int(monthly_salary)
-            if petty_cash:
-                new_values['PettyCash'] = int(petty_cash)
 
             if new_values:
                 self.update_data(store_manager_id, new_values)
-                print("Store Manager updated successfully!")
+                print("Store manager updated successfully!")
             else:
                 print("No changes were made.")
         except ValueError as e:
@@ -129,31 +91,28 @@ class StoreManagerTable:
             print(f"Error updating store manager: {e}")
 
     def delete_store_manager(self):
-        """Delete a store manager from the table."""
         try:
             store_manager_id = int(input("Enter the store manager ID to delete: "))
             self.delete_data(store_manager_id)
-            print("Store Manager deleted successfully!")
+            print("Store manager deleted successfully!")
         except ValueError as e:
             print(f"Invalid input: {e}")
         except Exception as e:
             print(f"Error deleting store manager: {e}")
 
     def view_store_managers(self):
-        """View all store managers in the table."""
         try:
             store_managers = self.select_all()
             if store_managers:
-                print("\nStore Managers in the table:")
-                for manager in store_managers:
-                    print(manager)
+                print("\nStore Managers:")
+                for store_manager in store_managers:
+                    print(store_manager)
             else:
                 print("No store managers found.")
         except Exception as e:
             print(f"Error retrieving store managers: {e}")
 
     def manage_store_managers(self):
-        """Manage store managers with add, edit, delete, and view options."""
         while True:
             print("\nStore Manager Management")
             print("1. Add Store Manager")

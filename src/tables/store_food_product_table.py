@@ -2,43 +2,37 @@ import os
 import sys
 import psycopg2
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.db_engine import DBEngine
 
 class StoreFoodProductTable:
     def __init__(self):
         self.db_engine = DBEngine()
         self.table_name = '"StoreFoodProduct"'
+        self.create_table()
 
     def create_table(self):
         create_table_query = '''
         CREATE TABLE IF NOT EXISTS "StoreFoodProduct" (
+            "FoodStorageID" INT NOT NULL,
             "StoreID" INT NOT NULL,
-            "FoodProductID" INT NOT NULL,
-            "Quantity" INT NOT NULL,
-            FOREIGN KEY ("StoreID") REFERENCES "Store" ("StoreID"),
-            FOREIGN KEY ("FoodProductID") REFERENCES "Food" ("FoodProductID")
+            "FoodID" INT NOT NULL,
+            PRIMARY KEY ("FoodStorageID", "StoreID", "FoodID")
         );
         '''
         self._execute_query(create_table_query)
 
     def insert_data(self, data):
         insert_query = '''
-        INSERT INTO "StoreFoodProduct" ("StoreID", "FoodProductID", "Quantity")
+        INSERT INTO "StoreFoodProduct" ("FoodStorageID", "StoreID", "FoodID")
         VALUES (%s, %s, %s);
         '''
         self._execute_query(insert_query, data)
 
-    def update_data(self, store_id, food_product_id, new_values):
-        set_clause = ', '.join([f'"{key}" = %s' for key in new_values.keys()])
-        update_query = f'UPDATE "StoreFoodProduct" SET {set_clause} WHERE "StoreID" = %s AND "FoodProductID" = %s'
-        values = list(new_values.values()) + [store_id, food_product_id]
-        self._execute_query(update_query, values)
-
-    def delete_data(self, store_id, food_product_id):
-        delete_query = 'DELETE FROM "StoreFoodProduct" WHERE "StoreID" = %s AND "FoodProductID" = %s'
-        self._execute_query(delete_query, (store_id, food_product_id))
+    def delete_data(self, food_storage_id, store_id, food_id):
+        delete_query = 'DELETE FROM "StoreFoodProduct" WHERE "FoodStorageID" = %s AND "StoreID" = %s AND "FoodID" = %s'
+        self._execute_query(delete_query, (food_storage_id, store_id, food_id))
 
     def select_all(self):
         select_query = 'SELECT * FROM "StoreFoodProduct"'
@@ -56,83 +50,61 @@ class StoreFoodProductTable:
             self.db_engine.connection.rollback()
             print(f"Error executing query: {error}")
 
-    def add_entry(self):
+    def add_store_food_product(self):
         try:
+            food_storage_id = int(input("Enter food storage ID: "))
             store_id = int(input("Enter store ID: "))
-            food_product_id = int(input("Enter food product ID: "))
-            quantity = int(input("Enter quantity: "))
+            food_id = int(input("Enter food ID: "))
 
-            self.insert_data((store_id, food_product_id, quantity))
-            print("Store food product entry added successfully!")
+            self.insert_data((food_storage_id, store_id, food_id))
+            print("Store food product added successfully!")
         except ValueError as e:
             print(f"Invalid input: {e}")
         except Exception as e:
-            print(f"Error adding store food product entry: {e}")
+            print(f"Error adding store food product: {e}")
 
-    def edit_entry(self):
+    def delete_store_food_product(self):
         try:
-            store_id = int(input("Enter store ID: "))
-            food_product_id = int(input("Enter food product ID: "))
+            food_storage_id = int(input("Enter food storage ID to delete: "))
+            store_id = int(input("Enter store ID to delete: "))
+            food_id = int(input("Enter food ID to delete: "))
 
-            quantity = input("Enter new quantity (leave empty to keep current): ")
+            self.delete_data(food_storage_id, store_id, food_id)
+            print("Store food product deleted successfully!")
+        except ValueError as e:
+            print(f"Invalid input: {e}")
+        except Exception as e:
+            print(f"Error deleting store food product: {e}")
 
-            new_values = {}
-            if quantity:
-                new_values['Quantity'] = int(quantity)
-
-            if new_values:
-                self.update_data(store_id, food_product_id, new_values)
-                print("Store food product entry updated successfully!")
+    def view_store_food_products(self):
+        try:
+            store_food_products = self.select_all()
+            if store_food_products:
+                print("\nStore Food Products:")
+                for store_food_product in store_food_products:
+                    print(store_food_product)
             else:
-                print("No changes were made.")
-        except ValueError as e:
-            print(f"Invalid input: {e}")
+                print("No store food products found.")
         except Exception as e:
-            print(f"Error updating store food product entry: {e}")
+            print(f"Error retrieving store food products: {e}")
 
-    def delete_entry(self):
-        try:
-            store_id = int(input("Enter store ID: "))
-            food_product_id = int(input("Enter food product ID: "))
-            self.delete_data(store_id, food_product_id)
-            print("Store food product entry deleted successfully!")
-        except ValueError as e:
-            print(f"Invalid input: {e}")
-        except Exception as e:
-            print(f"Error deleting store food product entry: {e}")
-
-    def view_entries(self):
-        try:
-            entries = self.select_all()
-            if entries:
-                print("\nStore Food Product entries:")
-                for entry in entries:
-                    print(entry)
-            else:
-                print("No store food product entries found.")
-        except Exception as e:
-            print(f"Error retrieving store food product entries: {e}")
-
-    def manage_entries(self):
+    def manage_store_food_products(self):
         while True:
             print("\nStore Food Product Management")
-            print("1. Add Entry")
-            print("2. Edit Entry")
-            print("3. Delete Entry")
-            print("4. View All Entries")
-            print("5. Back")
+            print("1. Add Store Food Product")
+            print("2. Delete Store Food Product")
+            print("3. View All Store Food Products")
+            print("4. Back")
 
-            choice = input("Enter your choice (1-5): ")
+            choice = input("Enter your choice (1-4): ")
 
             if choice == '1':
-                self.add_entry()
+                self.add_store_food_product()
             elif choice == '2':
-                self.edit_entry()
+                self.delete_store_food_product()
             elif choice == '3':
-                self.delete_entry()
+                self.view_store_food_products()
             elif choice == '4':
-                self.view_entries()
-            elif choice == '5':
                 break
             else:
-                print("Invalid choice, please select between 1 and 5.")
+                print("Invalid choice, please select between 1 and 4.")
