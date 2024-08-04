@@ -10,45 +10,46 @@ The project is organized into several directories and modules:
 
 SMS_SQL/
 ├── config/
-│ └── .env
+│   └── .env
 ├── myenv/
-│ └── [virtual environment files]
+│   └── [virtual environment files]
 ├── src/
-│ ├── init.py
-│ ├── base_table.py
-│ ├── db_engine.py
-│ ├── list_tables.py
-│ ├── main.py
-│ └── tables/
-│ ├── init.py
-│ ├── dry_storage_table.py
-│ ├── food_table.py
-│ ├── manager_table.py
-│ ├── manager_responsibilities_table.py
-│ ├── responsibilities_table.py
-│ ├── sm_responsibilities_table.py
-│ ├── store_table.py
-│ ├── store_manager_table.py
-│ ├── store_dry_product_table.py
-│ ├── store_food_product_table.py
-│ └── worker_table.py
+│   ├── __init__.py
+│   ├── base_table.py
+│   ├── db_engine.py
+│   ├── list_tables.py
+│   ├── main.py
+│   └── tables/
+│       ├── __init__.py
+│       ├── dry_storage_table.py
+│       ├── food_table.py
+│       ├── manager_table.py
+│       ├── manager_responsibilities_table.py
+│       ├── responsibilities_table.py
+│       ├── sm_responsibilities_table.py
+│       ├── store_table.py
+│       ├── store_manager_table.py
+│       ├── store_dry_product_table.py
+│       ├── store_food_product_table.py
+│       └── worker_table.py
 ├── test/
-│ ├── test_db_engine.py
-│ ├── test_list_table.py
-│ ├── test_dry_storage_table.py
-│ ├── test_food_table.py
-│ ├── test_manager_table.py
-│ ├── test_manager_responsibilities_table.py
-│ ├── test_responsibilities_table.py
-│ ├── test_sm_responsibilities_table.py
-│ ├── test_store_table.py
-│ ├── test_store_manager_table.py
-│ ├── test_store_dry_product_table.py
-│ ├── test_store_food_product_table.py
-│ └── test_worker_table.py
+│   ├── test_db_engine.py
+│   ├── test_list_table.py
+│   ├── test_dry_storage_table.py
+│   ├── test_food_table.py
+│   ├── test_manager_table.py
+│   ├── test_manager_responsibilities_table.py
+│   ├── test_responsibilities_table.py
+│   ├── test_sm_responsibilities_table.py
+│   ├── test_store_table.py
+│   ├── test_store_manager_table.py
+│   ├── test_store_dry_product_table.py
+│   ├── test_store_food_product_table.py
+│   └── test_worker_table.py
 ├── .gitignore
 ├── README.md
 └── requirements.txt
+
 
 ## Installation
 
