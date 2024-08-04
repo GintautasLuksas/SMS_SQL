@@ -2,9 +2,9 @@ import os
 import sys
 import psycopg2
 
-
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.db_engine import DBEngine
+
 class StoreTable:
     def __init__(self):
         self.db_engine = DBEngine()
@@ -44,8 +44,12 @@ class StoreTable:
 
     def select_all(self):
         select_query = 'SELECT * FROM "Store"'
-        self.db_engine.cursor.execute(select_query)
-        return self.db_engine.cursor.fetchall()
+        try:
+            self.db_engine.cursor.execute(select_query)
+            return self.db_engine.cursor.fetchall()
+        except (Exception, psycopg2.Error) as error:
+            print(f"Error retrieving data: {error}")
+            return []
 
     def _execute_query(self, query, params=None):
         try:
@@ -57,6 +61,7 @@ class StoreTable:
         except (Exception, psycopg2.Error) as error:
             self.db_engine.connection.rollback()
             print(f"Error executing query: {error}")
+            raise
 
     def add_store(self):
         try:
