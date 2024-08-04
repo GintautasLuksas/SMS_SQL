@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, patch, call
 from src.tables.store_manager_table import StoreManagerTable  # Adjust the import path as needed
 
 class TestStoreManagerTable(unittest.TestCase):
@@ -97,8 +97,8 @@ class TestStoreManagerTable(unittest.TestCase):
         with patch('builtins.print') as mock_print:
             self.store_manager_table.view_store_managers()
             # Check all calls to print
-            calls = [patch('builtins.print').call('\nStore Managers:'), patch('builtins.print').call((1, 2, 3))]
-            mock_print.assert_has_calls(calls)
+            expected_calls = [call('\nStore Managers:'), call((1, 2, 3))]
+            mock_print.assert_has_calls(expected_calls)
 
     @patch('builtins.input', side_effect=['1', '2', '3', '4', '5'])
     def test_manage_store_managers(self, mock_input):
