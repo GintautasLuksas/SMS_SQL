@@ -80,9 +80,9 @@ class StoreDryProductTable:
         try:
             store_dry_products = self.select_all()
             if store_dry_products:
-                print("\nStore Dry Products:")
-                for store_dry_product in store_dry_products:
-                    print(store_dry_product)
+                # Combine header and product data into a single string
+                output = "\nStore Dry Products:\n" + "\n".join(map(str, store_dry_products))
+                print(output)
             else:
                 print("No store dry products found.")
         except Exception as e:
