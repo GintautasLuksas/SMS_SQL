@@ -8,11 +8,11 @@ dotenv_path = os.path.join(os.path.dirname(__file__), '..', 'config', '.env')
 load_dotenv(dotenv_path=dotenv_path)
 
 # Debugging: Print environment variables to ensure they are loaded
-print("DB Name:", os.getenv('DB_NAME'))
-print("DB User:", os.getenv('DB_USERNAME'))
-print("DB Password:", os.getenv('DB_PASSWORD'))
-print("DB Host:", os.getenv('HOST'))
-print("DB Port:", os.getenv('PORT'))
+os.getenv('DB_NAME')
+os.getenv('DB_USERNAME')
+os.getenv('DB_PASSWORD')
+os.getenv('HOST')
+os.getenv('PORT')
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
