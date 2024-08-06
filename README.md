@@ -8,11 +8,12 @@ SMS_SQL is a comprehensive SQL-based system designed to manage various entities 
 
 The project is organized into several directories and modules:
 
+```plaintext
 SMS_SQL/
 ├── config/
-│   ├── .env
-│   └── myenv/
-│       └── [virtual environment files]
+│   └── .env
+├── myenv/
+│   └── [virtual environment files]
 ├── src/
 │   ├── __init__.py
 │   ├── base_table.py
@@ -31,7 +32,7 @@ SMS_SQL/
 │       ├── store_manager_table.py
 │       ├── store_dry_product_table.py
 │       ├── store_food_product_table.py
-│       ├── worker_table.py
+│       └── worker_table.py
 ├── test/
 │   ├── test_db_engine.py
 │   ├── test_list_table.py
@@ -45,7 +46,7 @@ SMS_SQL/
 │   ├── test_store_manager_table.py
 │   ├── test_store_dry_product_table.py
 │   ├── test_store_food_product_table.py
-│   ├── test_worker_table.py
+│   └── test_worker_table.py
 ├── .gitignore
 ├── README.md
 └── requirements.txt
