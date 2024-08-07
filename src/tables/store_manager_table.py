@@ -2,7 +2,7 @@ import os
 import sys
 import psycopg2
 
-# Ensure the src directory is in the Python path
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from src.db_engine import DBEngine
@@ -10,12 +10,12 @@ from src.db_engine import DBEngine
 class StoreManagerTable:
     def __init__(self):
         self.db_engine = DBEngine()
-        self.table_name = '"StoreManager"'
+        self.table_name = '"Store Manager"'
         self.create_table()
 
     def create_table(self):
         create_table_query = '''
-        CREATE TABLE IF NOT EXISTS "StoreManager" (
+        CREATE TABLE IF NOT EXISTS "Store Manager" (
             "StoreManagerID" SERIAL PRIMARY KEY,
             "ManagerID" INT NOT NULL,
             "StoreID" INT NOT NULL
@@ -25,23 +25,23 @@ class StoreManagerTable:
 
     def insert_data(self, data):
         insert_query = '''
-        INSERT INTO "StoreManager" ("ManagerID", "StoreID")
+        INSERT INTO "Store Manager" ("ManagerID", "StoreID")
         VALUES (%s, %s);
         '''
         self._execute_query(insert_query, data)
 
     def update_data(self, store_manager_id, new_values):
         set_clause = ', '.join([f'"{key}" = %s' for key in new_values.keys()])
-        update_query = f'UPDATE "StoreManager" SET {set_clause} WHERE "StoreManagerID" = %s'
+        update_query = f'UPDATE "Store Manager" SET {set_clause} WHERE "StoreManagerID" = %s'
         values = list(new_values.values()) + [store_manager_id]
         self._execute_query(update_query, values)
 
     def delete_data(self, store_manager_id):
-        delete_query = 'DELETE FROM "StoreManager" WHERE "StoreManagerID" = %s'
+        delete_query = 'DELETE FROM "Store Manager" WHERE "StoreManagerID" = %s'
         self._execute_query(delete_query, (store_manager_id,))
 
     def select_all(self):
-        select_query = 'SELECT * FROM "StoreManager"'
+        select_query = 'SELECT * FROM "Store Manager"'
         self.db_engine.cursor.execute(select_query)
         return self.db_engine.cursor.fetchall()
 
@@ -58,7 +58,7 @@ class StoreManagerTable:
 
     def add_store_manager(self):
         try:
-            manager_id = int(input("Enter manager ID: "))
+            manager_id = int(input("Enter Store manager ID: "))
             store_id = int(input("Enter store ID: "))
 
             self.insert_data((manager_id, store_id))

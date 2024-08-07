@@ -16,7 +16,7 @@ from src.tables.store_table import StoreTable
 from src.tables.store_dry_product_table import StoreDryProductTable
 from src.tables.store_food_product_table import StoreFoodProductTable
 
-# People management menus
+
 def display_people_menu():
     """Display the people menu options."""
     print("\nPeople Management")

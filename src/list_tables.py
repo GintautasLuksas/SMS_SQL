@@ -12,7 +12,6 @@ dotenv_path = os.path.join(os.path.dirname(__file__), '../config/.env')
 load_dotenv(dotenv_path)
 
 def list_tables():
-    """List all tables in the database."""
     db_engine = DBEngine()
     cursor = db_engine.cursor
 

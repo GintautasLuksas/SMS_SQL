@@ -1,7 +1,7 @@
 import os
 import sys
 import psycopg2
-from psycopg2 import sql
+
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.db_engine import DBEngine
@@ -27,7 +27,7 @@ class ManagerTable:
         self._execute_query(create_table_query)
 
     def insert_data(self, data):
-        """Insert a new manager into the table."""
+
         insert_query = '''
         INSERT INTO "Manager" ("Name", "PhoneNumber", "Country", "Email", "MonthlySalary", "MGRResponibilityID")
         VALUES (%s, %s, %s, %s, %s, %s);
@@ -35,25 +35,21 @@ class ManagerTable:
         self._execute_query(insert_query, data)
 
     def update_data(self, manager_id, new_values):
-        """Update an existing manager's information."""
         set_clause = ', '.join([f'"{key}" = %s' for key in new_values.keys()])
         update_query = f'UPDATE "Manager" SET {set_clause} WHERE "ManagerID" = %s'
         values = list(new_values.values()) + [manager_id]
         self._execute_query(update_query, values)
 
     def delete_data(self, manager_id):
-        """Delete a manager from the table."""
         delete_query = 'DELETE FROM "Manager" WHERE "ManagerID" = %s'
         self._execute_query(delete_query, (manager_id,))
 
     def select_all(self):
-        """Select all managers from the table."""
         select_query = 'SELECT * FROM "Manager"'
         self.db_engine.cursor.execute(select_query)
         return self.db_engine.cursor.fetchall()
 
     def _execute_query(self, query, params=None):
-        """Execute a query using the database engine's cursor."""
         try:
             if params:
                 self.db_engine.cursor.execute(query, params)
@@ -65,7 +61,7 @@ class ManagerTable:
             print(f"Error executing query: {error}")
 
     def add_manager(self):
-        """Add a new manager to the table."""
+
         try:
             name = input("Enter manager's name: ")
             phone_number = int(input("Enter manager's phone number: "))
@@ -82,7 +78,6 @@ class ManagerTable:
             print(f"Error adding manager: {e}")
 
     def edit_manager(self):
-        """Edit an existing manager's information."""
         try:
             manager_id = int(input("Enter the manager ID to edit: "))
             name = input("Enter new name (leave empty to keep current): ")
@@ -92,7 +87,6 @@ class ManagerTable:
             monthly_salary = input("Enter new monthly salary (leave empty to keep current): ")
             mgr_responsibility_id = input("Enter new responsibility ID (leave empty to keep current): ")
 
-            # Collect only fields that are not empty
             new_values = {}
             if name:
                 new_values['Name'] = name
@@ -118,7 +112,6 @@ class ManagerTable:
             print(f"Error updating manager: {e}")
 
     def delete_manager(self):
-        """Delete a manager from the table."""
         try:
             manager_id = int(input("Enter the manager ID to delete: "))
             self.delete_data(manager_id)
@@ -129,7 +122,6 @@ class ManagerTable:
             print(f"Error deleting manager: {e}")
 
     def view_managers(self):
-        """View all managers in the table."""
         try:
             managers = self.select_all()
             if managers:
@@ -142,7 +134,6 @@ class ManagerTable:
             print(f"Error retrieving managers: {e}")
 
     def manage_managers(self):
-        """Manage managers with a menu interface."""
         while True:
             print("\nManager Management")
             print("1. Add Manager")

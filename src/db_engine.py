@@ -3,16 +3,10 @@ import psycopg2
 from dotenv import load_dotenv
 import logging
 
-# Specify the path to the .env file
+
 dotenv_path = os.path.join(os.path.dirname(__file__), '..', 'config', '.env')
 load_dotenv(dotenv_path=dotenv_path)
 
-# Debugging: Print environment variables to ensure they are loaded
-os.getenv('DB_NAME')
-os.getenv('DB_USERNAME')
-os.getenv('DB_PASSWORD')
-os.getenv('HOST')
-os.getenv('PORT')
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -24,7 +18,6 @@ class DBEngine:
         self.connect()
 
     def connect(self):
-        """Establish a connection to the PostgreSQL database."""
         try:
             self.connection = psycopg2.connect(
                 dbname=os.getenv('DB_NAME'),
@@ -40,7 +33,6 @@ class DBEngine:
             raise
 
     def __del__(self):
-        """Close the database connection and cursor."""
         if self.cursor:
             self.cursor.close()
         if self.connection:

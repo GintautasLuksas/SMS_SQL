@@ -9,13 +9,18 @@ logger = logging.getLogger(__name__)
 
 class BaseTable:
     def __init__(self, table_name, columns):
+        '''
+
+        :param table_name:
+        :param columns:
+        '''
         self.table_name = table_name
         self.columns = columns
         self.db_connection = DBEngine()
         self.create_table()
 
     def create_table(self):
-        """Create the table if it doesn't exist."""
+
         column_definitions = ', '.join(
             f'"{col}" {dtype}' for col, dtype in self.columns.items()
         )
@@ -37,7 +42,7 @@ class BaseTable:
             self.db_connection.connection.rollback()
 
     def insert_data(self, df):
-        """Insert data into the table."""
+
         columns = sql.SQL(', ').join(map(sql.Identifier, self.columns.keys()))
         values = sql.SQL(', ').join(sql.Placeholder() * len(self.columns))
         query = sql.SQL("INSERT INTO {table} ({fields}) VALUES ({values}) ON CONFLICT DO NOTHING").format(
@@ -56,7 +61,7 @@ class BaseTable:
             self.db_connection.connection.rollback()
 
     def update_data(self, identifier_col, identifier_value, new_values):
-        """Update data in the table."""
+
         set_clause = sql.SQL(', ').join(
             sql.SQL("{field} = %s").format(field=sql.Identifier(k)) for k in new_values.keys()
         )
@@ -74,7 +79,7 @@ class BaseTable:
             self.db_connection.connection.rollback()
 
     def delete_data(self, identifier_col, identifier_value):
-        """Delete data from the table."""
+
         query = sql.SQL("DELETE FROM {table} WHERE {identifier_col} = %s").format(
             table=sql.Identifier(self.table_name),
             identifier_col=sql.Identifier(identifier_col)
@@ -88,7 +93,7 @@ class BaseTable:
             self.db_connection.connection.rollback()
 
     def select_all(self):
-        """Retrieve all data from the table."""
+
         query = sql.SQL("SELECT DISTINCT * FROM {table}").format(table=sql.Identifier(self.table_name))
         try:
             self.db_connection.cursor.execute(query)
@@ -98,7 +103,7 @@ class BaseTable:
             return []
 
     def drop_table(self):
-        """Drop the table."""
+
         query = sql.SQL("DROP TABLE IF EXISTS {table}").format(table=sql.Identifier(self.table_name))
         try:
             self.db_connection.cursor.execute(query)
