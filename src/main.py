@@ -10,7 +10,6 @@ from src.tables.store_manager_table import StoreManagerTable
 from src.tables.food_table import FoodTable
 from src.tables.dry_storage_table import DryStorageTable
 from src.tables.responsibilities_table import ResponsibilitiesTable
-from src.tables.manager_responsibilities_table import ManagerResponsibilitiesTable
 from src.tables.sm_responsibilities_table import SMResponsibilitiesTable
 from src.tables.store_table import StoreTable
 from src.tables.store_dry_product_table import StoreDryProductTable
@@ -18,7 +17,6 @@ from src.tables.store_food_product_table import StoreFoodProductTable
 
 
 def display_people_menu():
-    """Display the people menu options."""
     print("\nPeople Management")
     print("1. Workers")
     print("2. Managers")
@@ -26,14 +24,12 @@ def display_people_menu():
     print("4. Back")
 
 def display_products_menu():
-    """Display the products menu options."""
     print("\nProducts Management")
     print("1. Food")
     print("2. Dry Storage")
     print("3. Back")
 
 def display_responsibilities_menu():
-    """Display the responsibilities menu options."""
     print("\nResponsibilities Management")
     print("1. Responsibilities")
     print("2. Manager Responsibilities")
@@ -41,7 +37,6 @@ def display_responsibilities_menu():
     print("4. Back")
 
 def display_store_menu():
-    """Display the store menu options."""
     print("\nStore Management")
     print("1. Store")
     print("2. Store Dry Products")
@@ -49,7 +44,6 @@ def display_store_menu():
     print("4. Back")
 
 def display_main_menu():
-    """Display the main menu options."""
     print("\nMain Menu")
     print("1. People")
     print("2. Products")
@@ -82,8 +76,8 @@ def manage_responsibilities():
     responsibilities_table.manage_responsibilities()
 
 def manage_manager_responsibilities():
-    manager_responsibilities_table = ManagerResponsibilitiesTable()
-    manager_responsibilities_table.manage_manager_responsibilities()
+    manager_responsibilities_table = ResponsibilitiesTable()
+    manager_responsibilities_table.manage_responsibilities()
 
 def manage_sm_responsibilities():
     sm_responsibilities_table = SMResponsibilitiesTable()
