@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch
-from src.tables.responsibilities_table import ResponsibilitiesTable
+from src.person.responsibilities_table import ResponsibilitiesTable
 
 class TestResponsibilitiesTable(unittest.TestCase):
 

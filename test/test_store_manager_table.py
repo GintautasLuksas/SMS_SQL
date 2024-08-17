@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch, call
-from src.tables.store_manager_table import StoreManagerTable  # Adjust the import path as needed
+from src.person.store_manager_table import StoreManagerTable  # Adjust the import path as needed
 
 class TestStoreManagerTable(unittest.TestCase):
 

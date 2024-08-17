@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch
-from src.tables.manager_table import ManagerTable
+from src.person.manager_table import ManagerTable
 
 class TestManagerTable(unittest.TestCase):
 

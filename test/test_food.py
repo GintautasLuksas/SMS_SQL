@@ -1,6 +1,6 @@
 import unittest
 from datetime import date
-from src.tables.food_item_table import FoodTable
+from src.person.food_item_table import FoodTable
 
 class TestFoodTable(unittest.TestCase):
 
@@ -13,7 +13,7 @@ class TestFoodTable(unittest.TestCase):
         self.food_table.create_table()
 
     def test_create_table(self):
-        query = 'SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = \'Food\')'
+        query = 'SELECT EXISTS (SELECT 1 FROM information_schema.person WHERE table_name = \'Food\')'
         self.food_table.db_engine.cursor.execute(query)
         table_exists = self.food_table.db_engine.cursor.fetchone()[0]
         self.assertTrue(table_exists)

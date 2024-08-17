@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-from src.tables.store_table import StoreTable
+from src.person.store_table import StoreTable
 
 class TestStoreTable(unittest.TestCase):
 

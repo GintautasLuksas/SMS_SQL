@@ -17,7 +17,7 @@ class TestListTables(unittest.TestCase):
         mock_cursor = MagicMock()
         mock_db_engine.cursor = mock_cursor
 
-        # Set up the cursor mock to return a list of tables
+        # Set up the cursor mock to return a list of person
         mock_cursor.fetchall.return_value = [('table1',), ('table2',)]
 
         # Call the function to test
@@ -54,7 +54,7 @@ class TestListTables(unittest.TestCase):
         list_tables()
 
         # Check if logger.error was called with the expected error message
-        mock_logger.error.assert_called_once_with('Error retrieving tables: Database error')
+        mock_logger.error.assert_called_once_with('Error retrieving person: Database error')
 
         # Ensure that the cursor's close method was called
         mock_cursor.close.assert_called_once()

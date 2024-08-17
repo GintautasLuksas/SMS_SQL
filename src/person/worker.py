@@ -1,6 +1,5 @@
-import psycopg2
 from src.db_engine import DBEngine
-from src.Person import Person
+from src.person.person import Person
 
 class Worker(Person):
     def __init__(self, name: str, phone: int, email: str, country: str, hourly_rate: float, amount_worked: int):

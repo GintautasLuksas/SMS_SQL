@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 # Load the .env file from the config directory
 dotenv_path = os.path.join(os.path.dirname(__file__), '../config/.env')
-load_dotenv(dotenv_path)
+load_dotenv(dotenv_path=dotenv_path)
 
 def list_tables():
     db_engine = DBEngine()

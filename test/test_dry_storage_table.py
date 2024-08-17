@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch
-from src.tables.dry_storage_Item_table import DryStorageTable
+from src.person.dry_storage_Item_table import DryStorageTable
 
 
 class TestDryStorageTable(unittest.TestCase):

@@ -1,7 +1,6 @@
 import sys
-from Person import Worker, Manager, StoreManager
-from Product import Food, DryStorage
-from Store import Store
+from src.person.person import Worker, Manager, StoreManager
+from src.product.product import Food, DryStorage
 from src.db_engine import DBEngine
 
 class InteractiveSystem:

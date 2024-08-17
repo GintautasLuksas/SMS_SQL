@@ -1,5 +1,5 @@
 from src.db_engine import DBEngine
-from src.Person import Person
+from src.person.person import Person
 
 
 class Manager(Person):

@@ -1,5 +1,5 @@
 import unittest
-from src.tables.worker_table import WorkerTable
+from src.person.worker_table import WorkerTable
 from src.db_engine import DBEngine
 
 
@@ -14,7 +14,7 @@ class TestWorkerTable(unittest.TestCase):
         self.worker_table.create_table()
 
     def test_create_table(self):
-        query = 'SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = \'Worker\')'
+        query = 'SELECT EXISTS (SELECT 1 FROM information_schema.person WHERE table_name = \'Worker\')'
         self.worker_table.db_engine.cursor.execute(query)
         table_exists = self.worker_table.db_engine.cursor.fetchone()[0]
         self.assertTrue(table_exists)

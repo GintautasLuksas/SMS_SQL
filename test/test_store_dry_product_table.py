@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock, patch
-from src.tables.store_dry_product_table import StoreDryProductTable
+from src.person.store_dry_product_table import StoreDryProductTable
 
 class TestStoreDryProductTable(unittest.TestCase):
 
