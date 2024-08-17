@@ -1,6 +1,6 @@
 import unittest
 from datetime import date
-from src.tables.food_table import FoodTable
+from src.tables.food_item_table import FoodTable
 
 class TestFoodTable(unittest.TestCase):
 
