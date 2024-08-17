@@ -14,56 +14,76 @@ class Store:
 
     def _create_store(self):
         """Insert a new store into the database."""
-        with DBEngine() as db:
-            try:
-                db.cursor.execute("""
-                    INSERT INTO "Store" ("StoreName")
-                    VALUES (%s)
-                    RETURNING "StoreID"
-                """, (self.store_name,))
-                self.store_id = db.cursor.fetchone()[0]
-                db.connection.commit()
-                print(f"Store '{self.store_name}' created with ID {self.store_id}.")
-            except Exception as e:
-                print(f"Error creating store: {e}")
+        db = DBEngine()
+        connection = db.connection
+        cursor = db.cursor
+        try:
+            cursor.execute("""
+                INSERT INTO "Store" ("StoreName")
+                VALUES (%s)
+                RETURNING "StoreID"
+            """, (self.store_name,))
+            self.store_id = cursor.fetchone()[0]
+            connection.commit()
+            print(f"Store '{self.store_name}' created with ID {self.store_id}.")
+        except Exception as e:
+            print(f"Error creating store: {e}")
+        finally:
+            cursor.close()
+            connection.close()
 
     def _update_store(self):
         """Update an existing store's information."""
-        with DBEngine() as db:
-            try:
-                db.cursor.execute("""
-                    UPDATE "Store"
-                    SET "StoreName" = %s
-                    WHERE "StoreID" = %s
-                """, (self.store_name, self.store_id))
-                db.connection.commit()
-                print(f"Store ID {self.store_id} updated to '{self.store_name}'.")
-            except Exception as e:
-                print(f"Error updating store: {e}")
+        db = DBEngine()
+        connection = db.connection
+        cursor = db.cursor
+        try:
+            cursor.execute("""
+                UPDATE "Store"
+                SET "StoreName" = %s
+                WHERE "StoreID" = %s
+            """, (self.store_name, self.store_id))
+            connection.commit()
+            print(f"Store ID {self.store_id} updated to '{self.store_name}'.")
+        except Exception as e:
+            print(f"Error updating store: {e}")
+        finally:
+            cursor.close()
+            connection.close()
 
     def delete(self):
         """Delete a store from the database."""
         if self.store_id is not None:
-            with DBEngine() as db:
-                try:
-                    db.cursor.execute('DELETE FROM "Store" WHERE "StoreID" = %s', (self.store_id,))
-                    db.connection.commit()
-                    print(f"Store ID {self.store_id} deleted.")
-                    self.store_id = None
-                except Exception as e:
-                    print(f"Error deleting store: {e}")
+            db = DBEngine()
+            connection = db.connection
+            cursor = db.cursor
+            try:
+                cursor.execute('DELETE FROM "Store" WHERE "StoreID" = %s', (self.store_id,))
+                connection.commit()
+                print(f"Store ID {self.store_id} deleted.")
+                self.store_id = None
+            except Exception as e:
+                print(f"Error deleting store: {e}")
+            finally:
+                cursor.close()
+                connection.close()
         else:
             print("Store ID is not set.")
 
     @classmethod
     def view_all(cls):
         """View all stores in the table."""
-        with DBEngine() as db:
-            try:
-                db.cursor.execute('SELECT "StoreID", "StoreName" FROM "Store"')
-                return db.cursor.fetchall()
-            except Exception as e:
-                print(f"Error retrieving stores: {e}")
+        db = DBEngine()
+        connection = db.connection
+        cursor = db.cursor
+        try:
+            cursor.execute('SELECT "StoreID", "StoreName" FROM "Store"')
+            return cursor.fetchall()
+        except Exception as e:
+            print(f"Error retrieving stores: {e}")
+        finally:
+            cursor.close()
+            connection.close()
 
 def manage_store_menu():
     """Store management menu with all options."""
@@ -100,18 +120,23 @@ def edit_store():
     """Edit an existing store."""
     store_id = int(input("Enter the ID of the store to edit: "))
     store = Store("", store_id)
-    with DBEngine() as db:
-        try:
-            db.cursor.execute('SELECT "StoreName" FROM "Store" WHERE "StoreID" = %s', (store_id,))
-            store_data = db.cursor.fetchone()
-            if store_data:
-                new_name = input(f"Enter new store name (current: {store_data[0]}): ") or store_data[0]
-                store.store_name = new_name
-                store.save()
-            else:
-                print("Store not found.")
-        except Exception as e:
-            print(f"Error editing store: {e}")
+    db = DBEngine()
+    connection = db.connection
+    cursor = db.cursor
+    try:
+        cursor.execute('SELECT "StoreName" FROM "Store" WHERE "StoreID" = %s', (store_id,))
+        store_data = cursor.fetchone()
+        if store_data:
+            new_name = input(f"Enter new store name (current: {store_data[0]}): ") or store_data[0]
+            store.store_name = new_name
+            store.save()
+        else:
+            print("Store not found.")
+    except Exception as e:
+        print(f"Error editing store: {e}")
+    finally:
+        cursor.close()
+        connection.close()
 
 def delete_store():
     """Delete a store."""
