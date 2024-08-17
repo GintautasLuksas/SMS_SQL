@@ -4,7 +4,7 @@ from src.person.worker import Worker
 from src.product.product import manage_dry_storage_items, manage_food_items
 from src.person.storemanager import manage_store_manager_menu
 from src.store.store import manage_store_menu
-from src.store.store_product import manage_store_items_menu  # Import the function
+from src.store.store_product import manage_store_items_menu
 from src.list_tables import list_tables
 
 def main_menu():

@@ -1,93 +1,88 @@
 import unittest
-from unittest.mock import MagicMock
-from src.person.store_table import StoreTable
+from unittest.mock import patch, MagicMock
+from src.db_engine import DBEngine
+from src.store.store import Store
 
-class TestStoreTable(unittest.TestCase):
+class TestStore(unittest.TestCase):
 
-    def setUp(self):
-        # Create a StoreTable instance and mock DBEngine
-        self.store_table = StoreTable()
-        self.db_engine_mock = MagicMock()
-        self.store_table.db_engine = self.db_engine_mock
-        self.db_engine_mock.connection = MagicMock()
-        self.db_engine_mock.cursor = MagicMock()
+    @patch('your_module.DBEngine')
+    def test_store_create(self, MockDBEngine):
+        # Test creating a new store
+        mock_db = MockDBEngine.return_value
+        mock_cursor = MagicMock()
+        mock_db.cursor = mock_cursor
+        mock_db.connection = MagicMock()
 
-    def test_create_table(self):
-        self.store_table.create_table()
-        create_table_query = '''
-        CREATE TABLE IF NOT EXISTS "Store" (
-            "StoreID" SERIAL PRIMARY KEY,
-            "StoreName" VARCHAR(255) NOT NULL,
-            "StoreManagerID" INT NOT NULL,
-            "ManagerID" INT NOT NULL,
-            "WorkerID" INT NOT NULL,
-            "FoodStorageID" INT NOT NULL,
-            "DryStoreID" INT NOT NULL
-        );
-        '''
-        self.db_engine_mock.cursor.execute.assert_any_call(create_table_query)
+        mock_cursor.fetchone.return_value = [1]
 
-    def test_insert_data(self):
-        data = ("SuperMart", 1, 2, 3, 4, 5)
-        self.store_table.insert_data(data)
-        insert_query = '''
-        INSERT INTO "Store" ("StoreName", "StoreManagerID", "ManagerID", "WorkerID", "FoodStorageID", "DryStoreID")
-        VALUES (%s, %s, %s, %s, %s, %s);
-        '''
-        self.db_engine_mock.cursor.execute.assert_any_call(insert_query, data)
+        store = Store(store_name="Test Store")
 
-    def test_update_data(self):
-        store_id = 1
-        new_values = {
-            "StoreName": "SuperMart Updated",
-            "StoreManagerID": 10,
-            "ManagerID": 20,
-            "WorkerID": 30,
-            "FoodStorageID": 40,
-            "DryStoreID": 50
-        }
-        self.store_table.update_data(store_id, new_values)
-        set_clause = ', '.join([f'"{key}" = %s' for key in new_values.keys()])
-        update_query = f'UPDATE "Store" SET {set_clause} WHERE "StoreID" = %s'
-        values = list(new_values.values()) + [store_id]
-        self.db_engine_mock.cursor.execute.assert_any_call(update_query, values)
+        store.save()
 
-    def test_delete_data(self):
-        store_id = 1
-        self.store_table.delete_data(store_id)
-        delete_query = 'DELETE FROM "Store" WHERE "StoreID" = %s'
-        self.db_engine_mock.cursor.execute.assert_any_call(delete_query, (store_id,))
+        mock_cursor.execute.assert_called_once_with(
+            """
+            INSERT INTO "Store" ("StoreName")
+            VALUES (%s)
+            RETURNING "StoreID"
+            """,
+            ("Test Store",)
+        )
+        self.assertEqual(store.store_id, 1)
 
-    def test_select_all(self):
-        expected_data = [
-            (1, "SuperMart", 1, 2, 3, 4, 5),
-            (2, "MegaStore", 10, 20, 30, 40, 50)
-        ]
-        self.db_engine_mock.cursor.fetchall.return_value = expected_data
-        result = self.store_table.select_all()
-        self.assertEqual(result, expected_data)
-        self.db_engine_mock.cursor.execute.assert_any_call('SELECT * FROM "Store"')
+    @patch('your_module.DBEngine')  # Mock DBEngine in the module where Store is defined
+    def test_store_update(self, MockDBEngine):
+        # Test updating an existing store
+        mock_db = MockDBEngine.return_value
+        mock_cursor = MagicMock()
+        mock_db.cursor = mock_cursor
+        mock_db.connection = MagicMock()
 
-    def test_execute_query_failure(self):
-        self.db_engine_mock.cursor.execute.side_effect = Exception("Database error")
-        with self.assertRaises(Exception):
-            query = "SELECT * FROM Store"
-            self.store_table._execute_query(query)
+        store = Store(store_name="Test Store", store_id=1)
 
-    def test_execute_query_success(self):
-        query = "SELECT * FROM Store"
-        self.store_table._execute_query(query)
-        self.db_engine_mock.cursor.execute.assert_any_call(query)
+        store.save()
 
-    def test_execute_query_with_params_success(self):
-        query = "INSERT INTO Store (name) VALUES (%s)"
-        params = ("Test Store",)
-        self.store_table._execute_query(query, params)
-        self.db_engine_mock.cursor.execute.assert_any_call(query, params)
+        mock_cursor.execute.assert_called_once_with(
+            """
+            UPDATE "Store"
+            SET "StoreName" = %s
+            WHERE "StoreID" = %s
+            """,
+            ("Test Store", 1)
+        )
 
-    def tearDown(self):
-        # Clean up the mocks
-        self.db_engine_mock.reset_mock()
+    @patch('your_module.DBEngine')  # Mock DBEngine in the module where Store is defined
+    def test_store_delete(self, MockDBEngine):
+        # Test deleting a store
+        mock_db = MockDBEngine.return_value
+        mock_cursor = MagicMock()
+        mock_db.cursor = mock_cursor
+        mock_db.connection = MagicMock()
+
+        store = Store(store_name="Test Store", store_id=1)
+
+        store.delete()
+
+        mock_cursor.execute.assert_called_once_with(
+            'DELETE FROM "Store" WHERE "StoreID" = %s',
+            (1,)
+        )
+        self.assertIsNone(store.store_id)
+
+    @patch('your_module.DBEngine')  # Mock DBEngine in the module where Store is defined
+    def test_view_all_stores(self, MockDBEngine):
+        # Test viewing all stores
+        mock_db = MockDBEngine.return_value
+        mock_cursor = MagicMock()
+        mock_db.cursor = mock_cursor
+        mock_db.connection = MagicMock()
+
+        mock_cursor.fetchall.return_value = [(1, "Test Store")]
+
+        stores = Store.view_all()
+
+        mock_cursor.execute.assert_called_once_with('SELECT "StoreID", "StoreName" FROM "Store"')
+        self.assertEqual(len(stores), 1)
+        self.assertEqual(stores[0], (1, "Test Store"))
 
 if __name__ == '__main__':
     unittest.main()

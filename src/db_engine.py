@@ -3,18 +3,15 @@ import psycopg2
 from dotenv import load_dotenv
 import logging
 
-
+# Load environment variables
 dotenv_path = os.path.join(os.path.dirname(__file__), '..', 'config', '.env')
 load_dotenv(dotenv_path=dotenv_path)
 
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
 class DBEngine:
-    def __init__(self):
+    def __init__(self, logger=None):
         self.connection = None
         self.cursor = None
+        self.logger = logger or logging.getLogger(__name__)
         self.connect()
 
     def connect(self):
@@ -27,9 +24,9 @@ class DBEngine:
                 port=os.getenv('PORT')
             )
             self.cursor = self.connection.cursor()
-            logger.info('Database connection established.')
+            self.logger.info('Database connection established.')
         except (Exception, psycopg2.Error) as error:
-            logger.error(f"Error connecting to the database: {error}")
+            self.logger.error(f"Error connecting to the database: {error}")
             raise
 
     def __del__(self):
@@ -37,4 +34,4 @@ class DBEngine:
             self.cursor.close()
         if self.connection:
             self.connection.close()
-        logger.info('Database connection closed.')
+        self.logger.info('Database connection closed.')
