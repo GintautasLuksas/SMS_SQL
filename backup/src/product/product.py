@@ -1,4 +1,4 @@
-from src.db_engine import DBEngine
+from db_engine import DBEngine
 
 class Product:
     def __init__(self, name: str, amount: int, price: int, id: int = None):
@@ -309,3 +309,6 @@ def view_all_food_items():
             print(item)
     else:
         print("No food items found.")
+
+if __name__ == "__main__":
+    manage_items_menu()

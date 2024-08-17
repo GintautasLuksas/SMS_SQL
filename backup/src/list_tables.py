@@ -37,3 +37,5 @@ def list_tables():
         if db_engine.connection:
             db_engine.connection.close()
 
+if __name__ == "__main__":
+    list_tables()

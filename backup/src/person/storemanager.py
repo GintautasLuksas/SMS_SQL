@@ -1,4 +1,3 @@
-# src/person/store_manager.py
 from src.db_engine import DBEngine
 from src.person.person import Person
 
@@ -13,7 +12,7 @@ class StoreManager(Person):
 
     def display_salary(self):
         """Display the store manager's monthly salary."""
-        print(f"{self.name}'s monthly salary is: {self.monthly_salary}")
+        print(f'{self.name}\'s monthly salary is: {self.monthly_salary}')
 
     def save(self):
         """Save a new store manager or update an existing store manager in the database."""
@@ -33,7 +32,6 @@ class StoreManager(Person):
             """, (self.store_id, self.name, self.country, self.email, self.phone, self.monthly_salary, self.petty_cash))
             self.id = db.cursor.fetchone()[0]
             db.connection.commit()
-            print("Store Manager created successfully.")
         except Exception as e:
             print(f"Error creating store manager: {e}")
         finally:
@@ -48,9 +46,9 @@ class StoreManager(Person):
                 UPDATE "Store Manager"
                 SET "StoreID" = %s, "Name" = %s, "Country" = %s, "Email" = %s, "PhoneNumber" = %s, "MonthlySalary" = %s, "PettyCash" = %s
                 WHERE "StoreManagerID" = %s
-            """, (self.store_id, self.name, self.country, self.email, self.phone, self.monthly_salary, self.petty_cash, self.id))
+            """, (self.store_id, self.name, self.country, self.email, self.phone, self.monthly_salary, self.petty_cash,
+                  self.id))
             db.connection.commit()
-            print("Store Manager updated successfully.")
         except Exception as e:
             print(f"Error updating store manager: {e}")
         finally:
@@ -65,7 +63,6 @@ class StoreManager(Person):
                 db.cursor.execute('DELETE FROM "Store Manager" WHERE "StoreManagerID" = %s', (self.id,))
                 db.connection.commit()
                 self.id = None
-                print("Store Manager deleted successfully.")
             except Exception as e:
                 print(f"Error deleting store manager: {e}")
             finally:
@@ -130,15 +127,13 @@ class StoreManager(Person):
         """Add a new responsibility to a store manager."""
         db = DBEngine()
         try:
-            responsibility_id = int(input("Enter responsibility ID to add: ").strip())
+            responsibility_id = int(input("Enter responsibility ID to add: "))
             db.cursor.execute("""
                 INSERT INTO "SM Responsibilities" ("ResponsibilityID", "StoreManagerID")
                 VALUES (%s, %s)
             """, (responsibility_id, store_manager_id))
             db.connection.commit()
             print(f"Responsibility {responsibility_id} added to store manager {store_manager_id}.")
-        except ValueError:
-            print("Invalid responsibility ID. Please enter a number.")
         except Exception as e:
             print(f"Error adding responsibility: {e}")
         finally:
@@ -150,13 +145,11 @@ class StoreManager(Person):
         """Remove a responsibility from a store manager."""
         db = DBEngine()
         try:
-            responsibility_id = int(input("Enter responsibility ID to remove: ").strip())
+            responsibility_id = int(input("Enter responsibility ID to remove: "))
             db.cursor.execute('DELETE FROM "SM Responsibilities" WHERE "ResponsibilityID" = %s AND "StoreManagerID" = %s',
-                              (responsibility_id, store_manager_id))
+                           (responsibility_id, store_manager_id))
             db.connection.commit()
             print(f"Responsibility {responsibility_id} removed from store manager {store_manager_id}.")
-        except ValueError:
-            print("Invalid responsibility ID. Please enter a number.")
         except Exception as e:
             print(f"Error removing responsibility: {e}")
         finally:
@@ -171,7 +164,7 @@ class StoreManager(Person):
             db.cursor.execute('SELECT * FROM "SM Responsibilities" WHERE "StoreManagerID" = %s', (store_manager_id,))
             responsibilities = db.cursor.fetchall()
             if responsibilities:
-                print(f"\nResponsibilities for Store Manager ID: {store_manager_id}")
+                print("\nResponsibilities for Store Manager ID:", store_manager_id)
                 for resp in responsibilities:
                     print(f"Responsibility ID: {resp[0]}")
             else:
@@ -207,11 +200,8 @@ def manage_store_manager_menu():
         elif choice == '5':
             display_all_salaries()
         elif choice == '6':
-            try:
-                manager_id = int(input("Enter Store Manager ID to manage responsibilities: ").strip())
-                StoreManager.manage_responsibilities(manager_id)
-            except ValueError:
-                print("Invalid ID. Please enter a number.")
+            manager_id = int(input("Enter Store Manager ID to manage responsibilities: "))
+            StoreManager.manage_responsibilities(manager_id)
         elif choice == '7':
             break
         else:
@@ -219,48 +209,39 @@ def manage_store_manager_menu():
 
 def add_store_manager():
     """Add a new store manager."""
-    try:
-        name = input("Enter store manager's name: ").strip()
-        phone = int(input("Enter store manager's phone number: ").strip())
-        email = input("Enter store manager's email: ").strip()
-        country = input("Enter store manager's country: ").strip()
-        store_id = int(input("Enter store ID: ").strip())
-        monthly_salary = int(input("Enter store manager's monthly salary: ").strip())
-        petty_cash = int(input("Enter store manager's petty cash: ").strip())
+    name = input("Enter store manager's name: ")
+    phone = int(input("Enter store manager's phone number: "))
+    email = input("Enter store manager's email: ")
+    country = input("Enter store manager's country: ")
+    store_id = int(input("Enter store ID: "))
+    monthly_salary = int(input("Enter store manager's monthly salary: "))
+    petty_cash = int(input("Enter store manager's petty cash: "))
 
-        store_manager = StoreManager(name, phone, email, country, store_id, monthly_salary, petty_cash)
-        store_manager.save()
-        print("Store Manager added successfully.")
-    except ValueError:
-        print("Invalid input. Please enter the correct data type.")
+    store_manager = StoreManager(name, phone, email, country, store_id, monthly_salary, petty_cash)
+    store_manager.save()
+    print("Store Manager added successfully.")
 
 def edit_store_manager():
     """Edit an existing store manager."""
+    manager_id = int(input("Enter the ID of the store manager to edit: "))
+    db = DBEngine()
     try:
-        manager_id = int(input("Enter the ID of the store manager to edit: ").strip())
-        db = DBEngine()
         db.cursor.execute('SELECT * FROM "Store Manager" WHERE "StoreManagerID" = %s', (manager_id,))
         sm_data = db.cursor.fetchone()
         if sm_data:
-            name = input(f"Enter new name (current: {sm_data[2]}): ").strip() or sm_data[2]
-            phone = input(f"Enter new phone number (current: {sm_data[5]}): ").strip()
-            phone = int(phone) if phone else sm_data[5]
-            email = input(f"Enter new email (current: {sm_data[4]}): ").strip() or sm_data[4]
-            country = input(f"Enter new country (current: {sm_data[3]}): ").strip() or sm_data[3]
-            store_id = input(f"Enter new store ID (current: {sm_data[1]}): ").strip()
-            store_id = int(store_id) if store_id else sm_data[1]
-            monthly_salary = input(f"Enter new monthly salary (current: {sm_data[6]}): ").strip()
-            monthly_salary = int(monthly_salary) if monthly_salary else sm_data[6]
-            petty_cash = input(f"Enter new petty cash (current: {sm_data[7]}): ").strip()
-            petty_cash = int(petty_cash) if petty_cash else sm_data[7]
+            name = input(f"Enter new name (current: {sm_data[2]}): ") or sm_data[2]
+            phone = int(input(f"Enter new phone number (current: {sm_data[5]}): ") or sm_data[5])
+            email = input(f"Enter new email (current: {sm_data[4]}): ") or sm_data[4]
+            country = input(f"Enter new country (current: {sm_data[3]}): ") or sm_data[3]
+            store_id = int(input(f"Enter new store ID (current: {sm_data[1]}): ") or sm_data[1])
+            monthly_salary = int(input(f"Enter new monthly salary (current: {sm_data[6]}): ") or sm_data[6])
+            petty_cash = int(input(f"Enter new petty cash (current: {sm_data[7]}): ") or sm_data[7])
 
             store_manager = StoreManager(name, phone, email, country, store_id, monthly_salary, petty_cash, manager_id)
             store_manager.save()
             print("Store Manager updated successfully.")
         else:
             print("Store Manager not found.")
-    except ValueError:
-        print("Invalid input. Please enter the correct data type.")
     except Exception as e:
         print(f"Error editing store manager: {e}")
     finally:
@@ -269,13 +250,10 @@ def edit_store_manager():
 
 def delete_store_manager():
     """Delete an existing store manager."""
-    try:
-        manager_id = int(input("Enter the ID of the store manager to delete: ").strip())
-        store_manager = StoreManager(name='', phone=0, email='', country='', store_id=0, monthly_salary=0, petty_cash=0, id=manager_id)
-        store_manager.delete()
-        print("Store Manager deleted successfully.")
-    except ValueError:
-        print("Invalid ID. Please enter a number.")
+    manager_id = int(input("Enter the ID of the store manager to delete: "))
+    store_manager = StoreManager(name='', phone=0, email='', country='', store_id=0, monthly_salary=0, petty_cash=0, id=manager_id)
+    store_manager.delete()
+    print("Store Manager deleted successfully.")
 
 def view_all_store_managers():
     """View all store managers."""
@@ -289,3 +267,6 @@ def view_all_store_managers():
 def display_all_salaries():
     """Display all store managers' salaries."""
     StoreManager.display_all_salaries()
+
+if __name__ == "__main__":
+    manage_store_manager_menu()

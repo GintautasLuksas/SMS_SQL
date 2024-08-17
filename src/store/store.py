@@ -1,15 +1,4 @@
-import os
-from dotenv import load_dotenv
-import psycopg2
 from src.db_engine import DBEngine
-import logging
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# Load the .env file from the config directory
-dotenv_path = os.path.join(os.path.dirname(__file__), '../config/.env')
-load_dotenv(dotenv_path=dotenv_path)
 
 class Store:
     def __init__(self, store_name: str, store_id: int = None):
@@ -25,77 +14,56 @@ class Store:
 
     def _create_store(self):
         """Insert a new store into the database."""
-        db = DBEngine()
-        connection = db.connection
-        cursor = db.cursor
-        try:
-            cursor.execute("""
-                INSERT INTO "Store" ("StoreName")
-                VALUES (%s)
-                RETURNING "StoreID"
-            """, (self.store_name,))
-            self.store_id = cursor.fetchone()[0]
-            connection.commit()
-            print(f"Store '{self.store_name}' created with ID {self.store_id}.")
-        except Exception as e:
-            logger.error(f"Error creating store: {e}")
-        finally:
-            cursor.close()
-            connection.close()
+        with DBEngine() as db:
+            try:
+                db.cursor.execute("""
+                    INSERT INTO "Store" ("StoreName")
+                    VALUES (%s)
+                    RETURNING "StoreID"
+                """, (self.store_name,))
+                self.store_id = db.cursor.fetchone()[0]
+                db.connection.commit()
+                print(f"Store '{self.store_name}' created with ID {self.store_id}.")
+            except Exception as e:
+                print(f"Error creating store: {e}")
 
     def _update_store(self):
         """Update an existing store's information."""
-        db = DBEngine()
-        connection = db.connection
-        cursor = db.cursor
-        try:
-            cursor.execute("""
-                UPDATE "Store"
-                SET "StoreName" = %s
-                WHERE "StoreID" = %s
-            """, (self.store_name, self.store_id))
-            connection.commit()
-            print(f"Store ID {self.store_id} updated to '{self.store_name}'.")
-        except Exception as e:
-            logger.error(f"Error updating store: {e}")
-        finally:
-            cursor.close()
-            connection.close()
+        with DBEngine() as db:
+            try:
+                db.cursor.execute("""
+                    UPDATE "Store"
+                    SET "StoreName" = %s
+                    WHERE "StoreID" = %s
+                """, (self.store_name, self.store_id))
+                db.connection.commit()
+                print(f"Store ID {self.store_id} updated to '{self.store_name}'.")
+            except Exception as e:
+                print(f"Error updating store: {e}")
 
     def delete(self):
         """Delete a store from the database."""
         if self.store_id is not None:
-            db = DBEngine()
-            connection = db.connection
-            cursor = db.cursor
-            try:
-                cursor.execute('DELETE FROM "Store" WHERE "StoreID" = %s', (self.store_id,))
-                connection.commit()
-                print(f"Store ID {self.store_id} deleted.")
-                self.store_id = None
-            except Exception as e:
-                logger.error(f"Error deleting store: {e}")
-            finally:
-                cursor.close()
-                connection.close()
+            with DBEngine() as db:
+                try:
+                    db.cursor.execute('DELETE FROM "Store" WHERE "StoreID" = %s', (self.store_id,))
+                    db.connection.commit()
+                    print(f"Store ID {self.store_id} deleted.")
+                    self.store_id = None
+                except Exception as e:
+                    print(f"Error deleting store: {e}")
         else:
             print("Store ID is not set.")
 
     @classmethod
     def view_all(cls):
         """View all stores in the table."""
-        db = DBEngine()
-        connection = db.connection
-        cursor = db.cursor
-        try:
-            cursor.execute('SELECT "StoreID", "StoreName" FROM "Store"')
-            stores = cursor.fetchall()
-            return stores
-        except Exception as e:
-            logger.error(f"Error retrieving stores: {e}")
-        finally:
-            cursor.close()
-            connection.close()
+        with DBEngine() as db:
+            try:
+                db.cursor.execute('SELECT "StoreID", "StoreName" FROM "Store"')
+                return db.cursor.fetchall()
+            except Exception as e:
+                print(f"Error retrieving stores: {e}")
 
 def manage_store_menu():
     """Store management menu with all options."""
@@ -132,23 +100,18 @@ def edit_store():
     """Edit an existing store."""
     store_id = int(input("Enter the ID of the store to edit: "))
     store = Store("", store_id)
-    db = DBEngine()
-    connection = db.connection
-    cursor = db.cursor
-    try:
-        cursor.execute('SELECT "StoreName" FROM "Store" WHERE "StoreID" = %s', (store_id,))
-        store_data = cursor.fetchone()
-        if store_data:
-            new_name = input(f"Enter new store name (current: {store_data[0]}): ") or store_data[0]
-            store.store_name = new_name
-            store.save()
-        else:
-            print("Store not found.")
-    except Exception as e:
-        logger.error(f"Error editing store: {e}")
-    finally:
-        cursor.close()
-        connection.close()
+    with DBEngine() as db:
+        try:
+            db.cursor.execute('SELECT "StoreName" FROM "Store" WHERE "StoreID" = %s', (store_id,))
+            store_data = db.cursor.fetchone()
+            if store_data:
+                new_name = input(f"Enter new store name (current: {store_data[0]}): ") or store_data[0]
+                store.store_name = new_name
+                store.save()
+            else:
+                print("Store not found.")
+        except Exception as e:
+            print(f"Error editing store: {e}")
 
 def delete_store():
     """Delete a store."""
@@ -165,6 +128,3 @@ def view_all_stores():
             print(f"ID: {store[0]}, Name: {store[1]}")
     else:
         print("No stores found.")
-
-if __name__ == "__main__":
-    manage_store_menu()
