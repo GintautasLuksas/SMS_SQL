@@ -38,9 +38,9 @@ class TestMainMenu(unittest.TestCase):
         mock_manage_store_menu.assert_called_once()
         mock_manage_store_items_menu.assert_called_once()
 
-    @patch('src.main.Manager.manage_managers')  # Mock the Manager.manage_managers function
-    @patch('src.main.Worker.manage_workers')  # Mock the Worker.manage_workers function
-    @patch('src.main.manage_store_manager_menu')  # Mock the manage_store_manager_menu function
+    @patch('src.main.Manager.manage_managers')
+    @patch('src.main.Worker.manage_workers')
+    @patch('src.main.manage_store_manager_menu')
     @patch('builtins.input', side_effect=['1', '2', '3'])
     def test_people_menu(self, mock_input, mock_manage_managers, mock_manage_workers, mock_manage_store_manager_menu):
         """Test the people menu function."""
@@ -49,8 +49,8 @@ class TestMainMenu(unittest.TestCase):
         mock_manage_workers.assert_called_once()
         mock_manage_store_manager_menu.assert_called_once()
 
-    @patch('src.main.manage_dry_storage_items')  # Mock the manage_dry_storage_items function
-    @patch('src.main.manage_food_items')  # Mock the manage_food_items function
+    @patch('src.main.manage_dry_storage_items')
+    @patch('src.main.manage_food_items')
     @patch('builtins.input', side_effect=['1', '2', '3'])
     def test_product_menu(self, mock_input, mock_manage_dry_storage_items, mock_manage_food_items):
         """Test the product menu function."""
@@ -58,7 +58,7 @@ class TestMainMenu(unittest.TestCase):
         mock_manage_dry_storage_items.assert_called_once()
         mock_manage_food_items.assert_called_once()
 
-    @patch('src.main.list_tables')  # Mock the list_tables function
+    @patch('src.main.list_tables')
     @patch('builtins.input', side_effect=['4', '5'])
     def test_structure_menu(self, mock_input, mock_list_tables):
         """Test the structure menu function."""

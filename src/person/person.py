@@ -4,7 +4,7 @@ class Person:
         self.phone = phone
         self.email = email
         self.country = country
-        self.id = None  # Placeholder for database ID
+        self.id = None
 
     def contact_info(self):
         print(f'''
@@ -19,6 +19,5 @@ Country: {self.country}
 ''')
 
     def save(self):
-        # Placeholder method to be overridden in subclasses
         raise NotImplementedError
 

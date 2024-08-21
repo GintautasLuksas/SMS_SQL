@@ -1,13 +1,12 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from src.db_engine import DBEngine
 from src.store.store import Store
 
 class TestStore(unittest.TestCase):
 
     @patch('your_module.DBEngine')
     def test_store_create(self, MockDBEngine):
-        # Test creating a new store
+
         mock_db = MockDBEngine.return_value
         mock_cursor = MagicMock()
         mock_db.cursor = mock_cursor
@@ -29,9 +28,8 @@ class TestStore(unittest.TestCase):
         )
         self.assertEqual(store.store_id, 1)
 
-    @patch('your_module.DBEngine')  # Mock DBEngine in the module where Store is defined
+    @patch('your_module.DBEngine')
     def test_store_update(self, MockDBEngine):
-        # Test updating an existing store
         mock_db = MockDBEngine.return_value
         mock_cursor = MagicMock()
         mock_db.cursor = mock_cursor
@@ -50,7 +48,7 @@ class TestStore(unittest.TestCase):
             ("Test Store", 1)
         )
 
-    @patch('your_module.DBEngine')  # Mock DBEngine in the module where Store is defined
+    @patch('your_module.DBEngine')
     def test_store_delete(self, MockDBEngine):
         # Test deleting a store
         mock_db = MockDBEngine.return_value
@@ -68,7 +66,7 @@ class TestStore(unittest.TestCase):
         )
         self.assertIsNone(store.store_id)
 
-    @patch('your_module.DBEngine')  # Mock DBEngine in the module where Store is defined
+    @patch('your_module.DBEngine')
     def test_view_all_stores(self, MockDBEngine):
         # Test viewing all stores
         mock_db = MockDBEngine.return_value

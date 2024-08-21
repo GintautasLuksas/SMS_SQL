@@ -1,4 +1,3 @@
-# src/person/store_manager.py
 from src.db_engine import DBEngine
 from src.person.person import Person
 

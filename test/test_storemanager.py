@@ -12,7 +12,7 @@ class TestStoreManager(unittest.TestCase):
         mock_db.cursor = mock_cursor
         mock_db.connection = MagicMock()
 
-        mock_cursor.fetchone.return_value = [42]  # Simulate returning ID 42
+        mock_cursor.fetchone.return_value = [42]
 
         manager = StoreManager(name="Asta Kavaliauskaitė", phone=37061234567, email="asta.k@pavyzdys.lt",
                                country="Lithuania", store_id=5, monthly_salary=3200, petty_cash=150)
@@ -29,9 +29,8 @@ class TestStoreManager(unittest.TestCase):
         )
         self.assertEqual(manager.id, 42)
 
-    @patch('src.person.store_manager.DBEngine')  # Mock DBEngine in the module where StoreManager is defined
+    @patch('src.person.store_manager.DBEngine')
     def test_store_manager_update(self, MockDBEngine):
-        # Test updating an existing store manager
         mock_db = MockDBEngine.return_value
         mock_cursor = MagicMock()
         mock_db.cursor = mock_cursor
@@ -53,7 +52,6 @@ class TestStoreManager(unittest.TestCase):
 
     @patch('src.person.store_manager.DBEngine')  # Mock DBEngine in the module where StoreManager is defined
     def test_store_manager_delete(self, MockDBEngine):
-        # Test deleting a store manager
         mock_db = MockDBEngine.return_value
         mock_cursor = MagicMock()
         mock_db.cursor = mock_cursor
@@ -70,9 +68,8 @@ class TestStoreManager(unittest.TestCase):
         )
         self.assertIsNone(manager.id)
 
-    @patch('src.person.store_manager.DBEngine')  # Mock DBEngine in the module where StoreManager is defined
+    @patch('src.person.store_manager.DBEngine')
     def test_view_all_store_managers(self, MockDBEngine):
-        # Test viewing all store managers
         mock_db = MockDBEngine.return_value
         mock_cursor = MagicMock()
         mock_db.cursor = mock_cursor
@@ -93,9 +90,8 @@ class TestStoreManager(unittest.TestCase):
         self.assertEqual(len(store_managers), 1)
         self.assertEqual(store_managers[0], (7, 5, "Dainius Šukys", "Lithuania", "dainius.s@pavyzdys.lt", 37069876543, 2800, 100))
 
-    @patch('src.person.store_manager.DBEngine')  # Mock DBEngine in the module where StoreManager is defined
+    @patch('src.person.store_manager.DBEngine')
     def test_display_all_salaries(self, MockDBEngine):
-        # Test displaying all store managers' salaries
         mock_db = MockDBEngine.return_value
         mock_cursor = MagicMock()
         mock_db.cursor = mock_cursor
@@ -110,7 +106,7 @@ class TestStoreManager(unittest.TestCase):
             mock_print.assert_any_call("Salaries of All Store Managers:")
             mock_print.assert_any_call("ID: 7, Name: Dainius Šukys, Salary: 2800")
 
-    @patch('src.person.store_manager.DBEngine')  # Mock DBEngine in the module where StoreManager is defined
+    @patch('src.person.store_manager.DBEngine') 
     def test_manage_responsibilities(self, MockDBEngine):
         # Test managing responsibilities (Add and Remove)
         mock_db = MockDBEngine.return_value
@@ -118,7 +114,6 @@ class TestStoreManager(unittest.TestCase):
         mock_db.cursor = mock_cursor
         mock_db.connection = MagicMock()
 
-        # Mock input and output for add and remove responsibilities
         with patch('builtins.input', side_effect=['13', '15', '17']) as mock_input:
             with patch('builtins.print') as mock_print:
                 StoreManager.add_responsibility(7)

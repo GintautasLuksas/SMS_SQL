@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
 from src.db_engine import DBEngine
-from src.product.product import Product, DryStorageItem, FoodItem  # Adjust import according to your module's name
+from src.product.product import Product, DryStorageItem, FoodItem
 
 class TestProduct(unittest.TestCase):
 
@@ -18,7 +18,7 @@ class TestDryStorageItem(unittest.TestCase):
 
     @patch('src.db_engine.DBEngine')
     def test_dry_storage_item_save(self, MockDBEngine):
-        # Test saving a DryStorageItem
+
         mock_db = MockDBEngine.return_value
         mock_cursor = MagicMock()
         mock_db.cursor = mock_cursor
@@ -26,7 +26,7 @@ class TestDryStorageItem(unittest.TestCase):
 
         item = DryStorageItem(name="Test Item", amount=5, price=50, recipe_item=True, chemical=False, package_type="Box")
 
-        # Simulate insertion
+
         mock_cursor.fetchone.return_value = [1]  # Assume ID returned is 1
 
         item.save()
@@ -43,7 +43,7 @@ class TestDryStorageItem(unittest.TestCase):
 
     @patch('src.db_engine.DBEngine')
     def test_dry_storage_item_delete(self, MockDBEngine):
-        # Test deleting a DryStorageItem
+
         mock_db = MockDBEngine.return_value
         mock_cursor = MagicMock()
         mock_db.cursor = mock_cursor
