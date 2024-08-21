@@ -6,7 +6,6 @@ class TestStoreManager(unittest.TestCase):
 
     @patch('src.person.store_manager.DBEngine')
     def test_store_manager_create(self, MockDBEngine):
-        # Test creating a new store manager
         mock_db = MockDBEngine.return_value
         mock_cursor = MagicMock()
         mock_db.cursor = mock_cursor
@@ -106,7 +105,7 @@ class TestStoreManager(unittest.TestCase):
             mock_print.assert_any_call("Salaries of All Store Managers:")
             mock_print.assert_any_call("ID: 7, Name: Dainius Šukys, Salary: 2800")
 
-    @patch('src.person.store_manager.DBEngine') 
+    @patch('src.person.store_manager.DBEngine')
     def test_manage_responsibilities(self, MockDBEngine):
         # Test managing responsibilities (Add and Remove)
         mock_db = MockDBEngine.return_value
