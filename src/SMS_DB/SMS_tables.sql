@@ -1,18 +1,18 @@
 -- Table: Responsibilities
 CREATE TABLE "Responsibilities" (
-    "ResponsibilityID"   INTEGER PRIMARY KEY,
+    "ResponsibilityID"   SERIAL PRIMARY KEY,
     "ResponsibilityName" VARCHAR
 );
 
 -- Table: Store
 CREATE TABLE "Store" (
-    "StoreID"            INTEGER PRIMARY KEY,
+    "StoreID"            SERIAL PRIMARY KEY,
     "StoreName"          VARCHAR
 );
 
 -- Table: Dry Storage Item
 CREATE TABLE "Dry Storage Item" (
-    "DryStorageItemID"   INTEGER PRIMARY KEY,
+    "DryStorageItemID"   SERIAL PRIMARY KEY,
     "Name"               VARCHAR,
     "Amount"             INTEGER,
     "Price"              INTEGER,
@@ -23,7 +23,7 @@ CREATE TABLE "Dry Storage Item" (
 
 -- Table: Food Item
 CREATE TABLE "Food Item" (
-    "FoodItemID"         INTEGER PRIMARY KEY,
+    "FoodItemID"         SERIAL PRIMARY KEY,
     "Name"               VARCHAR,
     "Amount"             INTEGER,
     "Price"              INTEGER,
@@ -33,7 +33,7 @@ CREATE TABLE "Food Item" (
 
 -- Table: Store Manager
 CREATE TABLE "Store Manager" (
-    "StoreManagerID"     INTEGER PRIMARY KEY,
+    "StoreManagerID"     SERIAL PRIMARY KEY,
     "StoreID"            INTEGER,
     "Name"               VARCHAR,
     "Country"            VARCHAR,
@@ -46,7 +46,7 @@ CREATE TABLE "Store Manager" (
 
 -- Table: Manager
 CREATE TABLE "Manager" (
-    "ManagerID"          INTEGER PRIMARY KEY,
+    "ManagerID"          SERIAL PRIMARY KEY,
     "Name"               VARCHAR,
     "PhoneNumber"        INTEGER,
     "Country"            VARCHAR,
@@ -87,7 +87,7 @@ CREATE TABLE "StoreFoodProduct" (
 
 -- Table: Worker
 CREATE TABLE "Worker" (
-    "WorkerID"           INTEGER PRIMARY KEY,
+    "WorkerID"           SERIAL PRIMARY KEY,
     "Name"               VARCHAR,
     "PhoneNumber"        INTEGER,
     "Email"              VARCHAR,
