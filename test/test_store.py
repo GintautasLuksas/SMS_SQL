@@ -4,9 +4,8 @@ from src.store.store import Store
 
 class TestStore(unittest.TestCase):
 
-    @patch('your_module.DBEngine')
+    @patch('src.db_engine.DBEngine')
     def test_store_create(self, MockDBEngine):
-
         mock_db = MockDBEngine.return_value
         mock_cursor = MagicMock()
         mock_db.cursor = mock_cursor
@@ -15,7 +14,6 @@ class TestStore(unittest.TestCase):
         mock_cursor.fetchone.return_value = [1]
 
         store = Store(store_name="Test Store")
-
         store.save()
 
         mock_cursor.execute.assert_called_once_with(
@@ -28,7 +26,7 @@ class TestStore(unittest.TestCase):
         )
         self.assertEqual(store.store_id, 1)
 
-    @patch('your_module.DBEngine')
+    @patch('src.db_engine.DBEngine')
     def test_store_update(self, MockDBEngine):
         mock_db = MockDBEngine.return_value
         mock_cursor = MagicMock()
@@ -36,7 +34,6 @@ class TestStore(unittest.TestCase):
         mock_db.connection = MagicMock()
 
         store = Store(store_name="Test Store", store_id=1)
-
         store.save()
 
         mock_cursor.execute.assert_called_once_with(
@@ -48,16 +45,14 @@ class TestStore(unittest.TestCase):
             ("Test Store", 1)
         )
 
-    @patch('your_module.DBEngine')
+    @patch('src.db_engine.DBEngine')
     def test_store_delete(self, MockDBEngine):
-        # Test deleting a store
         mock_db = MockDBEngine.return_value
         mock_cursor = MagicMock()
         mock_db.cursor = mock_cursor
         mock_db.connection = MagicMock()
 
         store = Store(store_name="Test Store", store_id=1)
-
         store.delete()
 
         mock_cursor.execute.assert_called_once_with(
@@ -66,9 +61,8 @@ class TestStore(unittest.TestCase):
         )
         self.assertIsNone(store.store_id)
 
-    @patch('your_module.DBEngine')
+    @patch('src.db_engine.DBEngine')
     def test_view_all_stores(self, MockDBEngine):
-        # Test viewing all stores
         mock_db = MockDBEngine.return_value
         mock_cursor = MagicMock()
         mock_db.cursor = mock_cursor

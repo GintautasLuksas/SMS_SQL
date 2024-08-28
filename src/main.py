@@ -7,6 +7,7 @@ from src.store.store import manage_store_menu
 from src.store.store_product import manage_store_items_menu
 from src.list_tables import list_tables
 from src.SMS_DB.database_management import database_management_menu
+from src.person.responsibilities  import responsibilities_menu
 
 
 def main_menu():
@@ -17,10 +18,11 @@ def main_menu():
         print("2. People")
         print("3. Products")
         print("4. View Database Structure")
-        print("5. Database Management")
-        print("6. Exit")
+        print("5. Responsibilities")
+        print("6. Database Management")
+        print("7. Exit")
 
-        choice = input("Enter your choice (1-6): ").strip()
+        choice = input("Enter your choice (1-7): ").strip()
 
         if choice == '1':
             store_menu()
@@ -31,12 +33,14 @@ def main_menu():
         elif choice == '4':
             structure_menu()
         elif choice == '5':
-            database_management_menu()  # Call the database management menu
+            responsibilities_menu()
         elif choice == '6':
+            database_management_menu()  # Call the database management menu
+        elif choice == '7':
             print("Exiting the application.")
             sys.exit()
         else:
-            print("Invalid choice, please select between 1 and 6.")
+            print("Invalid choice, please select between 1 and 7.")
 
 def store_menu():
     """Display the store menu and handle user input."""

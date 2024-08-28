@@ -1,3 +1,5 @@
+# src/product/product.py
+
 from src.db_engine import DBEngine
 
 class Product:
@@ -8,21 +10,26 @@ class Product:
         self.id = id
 
     def save(self):
-        raise NotImplementedError
+        """Save a new product or update an existing product in the database."""
+        raise NotImplementedError("Subclass must implement abstract method")
 
     def delete(self):
-        raise NotImplementedError
+        """Delete a product from the database."""
+        raise NotImplementedError("Subclass must implement abstract method")
 
     @classmethod
     def view_all(cls):
-        raise NotImplementedError
+        """View all products in the table."""
+        raise NotImplementedError("Subclass must implement abstract method")
 
     @classmethod
     def find_by_id(cls, id: int):
-        raise NotImplementedError
+        """Find a product by ID."""
+        raise NotImplementedError("Subclass must implement abstract method")
 
     def __str__(self):
         return f"ID: {self.id}, Name: {self.name}, Amount: {self.amount}, Price: {self.price}"
+
 
 class DryStorageItem(Product):
     def __init__(self, name: str, amount: int, price: int, recipe_item: bool, chemical: bool, package_type: str, id: int = None):
@@ -32,6 +39,7 @@ class DryStorageItem(Product):
         self.package_type = package_type
 
     def save(self):
+        """Save a new dry storage item or update an existing item in the database."""
         db = DBEngine()
         connection = db.connection
         cursor = db.cursor
@@ -57,6 +65,7 @@ class DryStorageItem(Product):
             connection.close()
 
     def delete(self):
+        """Delete a dry storage item from the database."""
         if self.id is not None:
             db = DBEngine()
             connection = db.connection
@@ -75,6 +84,7 @@ class DryStorageItem(Product):
 
     @classmethod
     def view_all(cls):
+        """View all dry storage items in the table."""
         db = DBEngine()
         connection = db.connection
         cursor = db.cursor
@@ -91,6 +101,26 @@ class DryStorageItem(Product):
             cursor.close()
             connection.close()
 
+    @classmethod
+    def find_by_id(cls, id: int):
+        """Find a dry storage item by ID."""
+        db = DBEngine()
+        connection = db.connection
+        cursor = db.cursor
+        try:
+            cursor.execute('SELECT "DryStorageItemID", "Name", "Amount", "Price", "RecipeItem", "Chemical", "PackageType" FROM "Dry Storage Item" WHERE "DryStorageItemID" = %s', (id,))
+            item = cursor.fetchone()
+            if item:
+                return cls(*item[1:], id=item[0])
+            else:
+                return None
+        except Exception as e:
+            print(f"Error finding dry storage item: {e}")
+        finally:
+            cursor.close()
+            connection.close()
+
+
 class FoodItem(Product):
     def __init__(self, name: str, amount: int, price: int, storage_condition: str, expiry_date: str, id: int = None):
         super().__init__(name, amount, price, id)
@@ -98,6 +128,7 @@ class FoodItem(Product):
         self.expiry_date = expiry_date
 
     def save(self):
+        """Save a new food item or update an existing item in the database."""
         db = DBEngine()
         connection = db.connection
         cursor = db.cursor
@@ -123,6 +154,7 @@ class FoodItem(Product):
             connection.close()
 
     def delete(self):
+        """Delete a food item from the database."""
         if self.id is not None:
             db = DBEngine()
             connection = db.connection
@@ -141,6 +173,7 @@ class FoodItem(Product):
 
     @classmethod
     def view_all(cls):
+        """View all food items in the table."""
         db = DBEngine()
         connection = db.connection
         cursor = db.cursor
@@ -156,6 +189,26 @@ class FoodItem(Product):
         finally:
             cursor.close()
             connection.close()
+
+    @classmethod
+    def find_by_id(cls, id: int):
+        """Find a food item by ID."""
+        db = DBEngine()
+        connection = db.connection
+        cursor = db.cursor
+        try:
+            cursor.execute('SELECT "FoodItemID", "Name", "Amount", "Price", "StorageCondition", "ExpiryDate" FROM "Food Item" WHERE "FoodItemID" = %s', (id,))
+            item = cursor.fetchone()
+            if item:
+                return cls(*item[1:], id=item[0])
+            else:
+                return None
+        except Exception as e:
+            print(f"Error finding food item: {e}")
+        finally:
+            cursor.close()
+            connection.close()
+
 
 def manage_items_menu():
     """Item management menu with options for Dry Storage and Food Items."""
@@ -175,6 +228,7 @@ def manage_items_menu():
             break
         else:
             print("Invalid choice, please select between 1 and 3.")
+
 
 def manage_dry_storage_items():
     """Manage Dry Storage Items with CRUD operations."""
@@ -201,6 +255,7 @@ def manage_dry_storage_items():
         else:
             print("Invalid choice, please select between 1 and 5.")
 
+
 def manage_food_items():
     """Manage Food Items with CRUD operations."""
     while True:
@@ -226,7 +281,9 @@ def manage_food_items():
         else:
             print("Invalid choice, please select between 1 and 5.")
 
+
 def add_dry_storage_item():
+    """Add a new dry storage item."""
     name = input("Enter name: ")
     amount = int(input("Enter amount: "))
     price = int(input("Enter price: "))
@@ -237,7 +294,9 @@ def add_dry_storage_item():
     item.save()
     print("Dry storage item added.")
 
+
 def edit_dry_storage_item():
+    """Edit an existing dry storage item."""
     id = int(input("Enter ID of the item to edit: "))
     item = DryStorageItem.find_by_id(id)
     if item:
@@ -252,7 +311,9 @@ def edit_dry_storage_item():
     else:
         print("Item not found.")
 
+
 def delete_dry_storage_item():
+    """Delete a dry storage item."""
     id = int(input("Enter ID of the item to delete: "))
     item = DryStorageItem.find_by_id(id)
     if item:
@@ -261,7 +322,9 @@ def delete_dry_storage_item():
     else:
         print("Item not found.")
 
+
 def view_all_dry_storage_items():
+    """View all dry storage items."""
     items = DryStorageItem.view_all()
     if items:
         for item in items:
@@ -269,7 +332,9 @@ def view_all_dry_storage_items():
     else:
         print("No dry storage items found.")
 
+
 def add_food_item():
+    """Add a new food item."""
     name = input("Enter name: ")
     amount = int(input("Enter amount: "))
     price = int(input("Enter price: "))
@@ -279,7 +344,9 @@ def add_food_item():
     item.save()
     print("Food item added.")
 
+
 def edit_food_item():
+    """Edit an existing food item."""
     id = int(input("Enter ID of the item to edit: "))
     item = FoodItem.find_by_id(id)
     if item:
@@ -293,7 +360,9 @@ def edit_food_item():
     else:
         print("Item not found.")
 
+
 def delete_food_item():
+    """Delete a food item."""
     id = int(input("Enter ID of the item to delete: "))
     item = FoodItem.find_by_id(id)
     if item:
@@ -302,10 +371,16 @@ def delete_food_item():
     else:
         print("Item not found.")
 
+
 def view_all_food_items():
+    """View all food items."""
     items = FoodItem.view_all()
     if items:
         for item in items:
             print(item)
     else:
         print("No food items found.")
+
+
+if __name__ == "__main__":
+    manage_items_menu()

@@ -1,14 +1,15 @@
+# src/person/storemanager.py
+
 from src.db_engine import DBEngine
 from src.person.person import Person
 
 class StoreManager(Person):
     def __init__(self, name: str, phone: int, email: str, country: str, store_id: int,
                  monthly_salary: int, petty_cash: int, id: int = None):
-        super().__init__(name, phone, email, country)
+        super().__init__(name, phone, email, country, id)
         self.store_id = store_id
         self.monthly_salary = monthly_salary
         self.petty_cash = petty_cash
-        self.id = id
 
     def display_salary(self):
         """Display the store manager's monthly salary."""
@@ -83,7 +84,19 @@ class StoreManager(Person):
                 FROM "Store Manager"
             """)
             store_managers = db.cursor.fetchall()
-            return store_managers
+            return [
+                cls(
+                    id=sm[0],
+                    store_id=sm[1],
+                    name=sm[2],
+                    country=sm[3],
+                    email=sm[4],
+                    phone=sm[5],
+                    monthly_salary=sm[6],
+                    petty_cash=sm[7]
+                )
+                for sm in store_managers
+            ]
         except Exception as e:
             print(f"Error retrieving store managers: {e}")
         finally:
@@ -97,89 +110,11 @@ class StoreManager(Person):
         if store_managers:
             print("Salaries of All Store Managers:")
             for sm in store_managers:
-                print(f"ID: {sm[0]}, Name: {sm[2]}, Salary: {sm[6]}")
+                print(f"ID: {sm.id}, Name: {sm.name}, Salary: {sm.monthly_salary}")
         else:
             print("No store managers found.")
 
-    @classmethod
-    def manage_responsibilities(cls, store_manager_id: int):
-        """Manage store manager responsibilities through a menu."""
-        while True:
-            print("\nResponsibility Management")
-            print("1. Add Responsibility")
-            print("2. Remove Responsibility")
-            print("3. View Responsibilities")
-            print("4. Back")
 
-            choice = input("Enter your choice (1-4): ")
-
-            if choice == '1':
-                cls.add_responsibility(store_manager_id)
-            elif choice == '2':
-                cls.remove_responsibility(store_manager_id)
-            elif choice == '3':
-                cls.view_responsibilities(store_manager_id)
-            elif choice == '4':
-                break
-            else:
-                print("Invalid choice, please select between 1 and 4.")
-
-    @classmethod
-    def add_responsibility(cls, store_manager_id: int):
-        """Add a new responsibility to a store manager."""
-        db = DBEngine()
-        try:
-            responsibility_id = int(input("Enter responsibility ID to add: ").strip())
-            db.cursor.execute("""
-                INSERT INTO "SM Responsibilities" ("ResponsibilityID", "StoreManagerID")
-                VALUES (%s, %s)
-            """, (responsibility_id, store_manager_id))
-            db.connection.commit()
-            print(f"Responsibility {responsibility_id} added to store manager {store_manager_id}.")
-        except ValueError:
-            print("Invalid responsibility ID. Please enter a number.")
-        except Exception as e:
-            print(f"Error adding responsibility: {e}")
-        finally:
-            db.cursor.close()
-            db.connection.close()
-
-    @classmethod
-    def remove_responsibility(cls, store_manager_id: int):
-        """Remove a responsibility from a store manager."""
-        db = DBEngine()
-        try:
-            responsibility_id = int(input("Enter responsibility ID to remove: ").strip())
-            db.cursor.execute('DELETE FROM "SM Responsibilities" WHERE "ResponsibilityID" = %s AND "StoreManagerID" = %s',
-                              (responsibility_id, store_manager_id))
-            db.connection.commit()
-            print(f"Responsibility {responsibility_id} removed from store manager {store_manager_id}.")
-        except ValueError:
-            print("Invalid responsibility ID. Please enter a number.")
-        except Exception as e:
-            print(f"Error removing responsibility: {e}")
-        finally:
-            db.cursor.close()
-            db.connection.close()
-
-    @classmethod
-    def view_responsibilities(cls, store_manager_id: int):
-        """View responsibilities for a specific store manager."""
-        db = DBEngine()
-        try:
-            db.cursor.execute('SELECT * FROM "SM Responsibilities" WHERE "StoreManagerID" = %s', (store_manager_id,))
-            responsibilities = db.cursor.fetchall()
-            if responsibilities:
-                print(f"\nResponsibilities for Store Manager ID: {store_manager_id}")
-                for resp in responsibilities:
-                    print(f"Responsibility ID: {resp[0]}")
-            else:
-                print("No responsibilities found for this store manager.")
-        except Exception as e:
-            print(f"Error retrieving responsibilities: {e}")
-        finally:
-            db.cursor.close()
-            db.connection.close()
 
 def manage_store_manager_menu():
     """Store Manager management menu with all options."""
@@ -190,10 +125,9 @@ def manage_store_manager_menu():
         print("3. Delete Store Manager")
         print("4. View All Store Managers")
         print("5. Display All Salaries")
-        print("6. Manage Responsibilities")
-        print("7. Back")
+        print("6. Back")
 
-        choice = input("Enter your choice (1-7): ")
+        choice = input("Enter your choice (1-6): ")
 
         if choice == '1':
             add_store_manager()
@@ -206,12 +140,6 @@ def manage_store_manager_menu():
         elif choice == '5':
             display_all_salaries()
         elif choice == '6':
-            try:
-                manager_id = int(input("Enter Store Manager ID to manage responsibilities: ").strip())
-                StoreManager.manage_responsibilities(manager_id)
-            except ValueError:
-                print("Invalid ID. Please enter a number.")
-        elif choice == '7':
             break
         else:
             print("Invalid choice, please select between 1 and 7.")
@@ -281,7 +209,7 @@ def view_all_store_managers():
     store_managers = StoreManager.view_all()
     if store_managers:
         for sm in store_managers:
-            print(f"ID: {sm[0]}, Store ID: {sm[1]}, Name: {sm[2]}, Country: {sm[3]}, Email: {sm[4]}, Phone: {sm[5]}, Monthly Salary: {sm[6]}, Petty Cash: {sm[7]}")
+            print(f"ID: {sm.id}, Store ID: {sm.store_id}, Name: {sm.name}, Country: {sm.country}, Email: {sm.email}, Phone: {sm.phone}, Monthly Salary: {sm.monthly_salary}, Petty Cash: {sm.petty_cash}")
     else:
         print("No store managers found.")
 

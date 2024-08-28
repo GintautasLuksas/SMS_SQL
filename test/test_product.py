@@ -4,10 +4,21 @@ from src.db_engine import DBEngine
 from src.product.product import Product, DryStorageItem, FoodItem
 
 class TestProduct(unittest.TestCase):
+    """
+    Unit tests for the Product class.
+    """
 
     @patch('src.db_engine.DBEngine')
     def test_product_initialization(self, MockDBEngine):
-        # Test the initialization of Product class
+        """
+        Test the initialization of the Product class.
+
+        This test verifies that a Product object is correctly initialized with the given
+        attributes and that the `id` attribute is set to None upon creation.
+
+        Args:
+            MockDBEngine (MagicMock): Mocked DBEngine class to avoid actual database interactions.
+        """
         product = Product(name="Test Product", amount=10, price=100)
         self.assertEqual(product.name, "Test Product")
         self.assertEqual(product.amount, 10)
@@ -15,10 +26,22 @@ class TestProduct(unittest.TestCase):
         self.assertIsNone(product.id)
 
 class TestDryStorageItem(unittest.TestCase):
+    """
+    Unit tests for the DryStorageItem class.
+    """
 
     @patch('src.db_engine.DBEngine')
     def test_dry_storage_item_save(self, MockDBEngine):
+        """
+        Test saving a DryStorageItem to the database.
 
+        This test ensures that the `save` method of the DryStorageItem class executes the correct
+        SQL query to insert a new record into the "Dry Storage Item" table and updates the
+        `id` attribute of the item based on the returned ID from the database.
+
+        Args:
+            MockDBEngine (MagicMock): Mocked DBEngine class to avoid actual database interactions.
+        """
         mock_db = MockDBEngine.return_value
         mock_cursor = MagicMock()
         mock_db.cursor = mock_cursor
@@ -26,7 +49,7 @@ class TestDryStorageItem(unittest.TestCase):
 
         item = DryStorageItem(name="Test Item", amount=5, price=50, recipe_item=True, chemical=False, package_type="Box")
 
-
+        # Simulate insertion
         mock_cursor.fetchone.return_value = [1]  # Assume ID returned is 1
 
         item.save()
@@ -43,7 +66,16 @@ class TestDryStorageItem(unittest.TestCase):
 
     @patch('src.db_engine.DBEngine')
     def test_dry_storage_item_delete(self, MockDBEngine):
+        """
+        Test deleting a DryStorageItem from the database.
 
+        This test verifies that the `delete` method of the DryStorageItem class executes the correct
+        SQL query to delete a record from the "Dry Storage Item" table based on the `id` attribute
+        of the item and sets the `id` attribute to None after deletion.
+
+        Args:
+            MockDBEngine (MagicMock): Mocked DBEngine class to avoid actual database interactions.
+        """
         mock_db = MockDBEngine.return_value
         mock_cursor = MagicMock()
         mock_db.cursor = mock_cursor
@@ -61,7 +93,15 @@ class TestDryStorageItem(unittest.TestCase):
 
     @patch('src.db_engine.DBEngine')
     def test_dry_storage_item_view_all(self, MockDBEngine):
-        # Test viewing all DryStorageItems
+        """
+        Test retrieving all DryStorageItems from the database.
+
+        This test verifies that the `view_all` class method of DryStorageItem correctly retrieves
+        and returns a list of DryStorageItem instances based on the records in the database.
+
+        Args:
+            MockDBEngine (MagicMock): Mocked DBEngine class to avoid actual database interactions.
+        """
         mock_db = MockDBEngine.return_value
         mock_cursor = MagicMock()
         mock_db.cursor = mock_cursor
@@ -75,10 +115,22 @@ class TestDryStorageItem(unittest.TestCase):
         self.assertEqual(items[0].name, "Test Item")
 
 class TestFoodItem(unittest.TestCase):
+    """
+    Unit tests for the FoodItem class.
+    """
 
     @patch('src.db_engine.DBEngine')
     def test_food_item_save(self, MockDBEngine):
-        # Test saving a FoodItem
+        """
+        Test saving a FoodItem to the database.
+
+        This test ensures that the `save` method of the FoodItem class executes the correct
+        SQL query to insert a new record into the "Food Item" table and updates the
+        `id` attribute of the item based on the returned ID from the database.
+
+        Args:
+            MockDBEngine (MagicMock): Mocked DBEngine class to avoid actual database interactions.
+        """
         mock_db = MockDBEngine.return_value
         mock_cursor = MagicMock()
         mock_db.cursor = mock_cursor
@@ -103,7 +155,16 @@ class TestFoodItem(unittest.TestCase):
 
     @patch('src.db_engine.DBEngine')
     def test_food_item_delete(self, MockDBEngine):
-        # Test deleting a FoodItem
+        """
+        Test deleting a FoodItem from the database.
+
+        This test verifies that the `delete` method of the FoodItem class executes the correct
+        SQL query to delete a record from the "Food Item" table based on the `id` attribute
+        of the item and sets the `id` attribute to None after deletion.
+
+        Args:
+            MockDBEngine (MagicMock): Mocked DBEngine class to avoid actual database interactions.
+        """
         mock_db = MockDBEngine.return_value
         mock_cursor = MagicMock()
         mock_db.cursor = mock_cursor
@@ -121,7 +182,15 @@ class TestFoodItem(unittest.TestCase):
 
     @patch('src.db_engine.DBEngine')
     def test_food_item_view_all(self, MockDBEngine):
-        # Test viewing all FoodItems
+        """
+        Test retrieving all FoodItems from the database.
+
+        This test verifies that the `view_all` class method of FoodItem correctly retrieves
+        and returns a list of FoodItem instances based on the records in the database.
+
+        Args:
+            MockDBEngine (MagicMock): Mocked DBEngine class to avoid actual database interactions.
+        """
         mock_db = MockDBEngine.return_value
         mock_cursor = MagicMock()
         mock_db.cursor = mock_cursor

@@ -1,116 +1,128 @@
+from typing import List, Tuple, Optional
 from src.db_engine import DBEngine
 
 class StoreDryProduct:
+    """Class to manage dry storage products in a store."""
+
     @staticmethod
-    def add(store_id: int, dry_storage_id: int):
+    def add(store_id: int, dry_storage_id: int) -> None:
         """Add a dry storage item to a store."""
-        db = DBEngine()
         try:
-            db.cursor.execute("""
-                INSERT INTO "StoreDryProduct" ("StoreID", "DryStorageID")
-                VALUES (%s, %s)
-            """, (store_id, dry_storage_id))
-            db.connection.commit()
-            print("Dry storage item added to store.")
+            with DBEngine() as db:
+                if db.cursor and db.connection:
+                    db.cursor.execute("""
+                        INSERT INTO "StoreDryProduct" ("StoreID", "DryStorageID")
+                        VALUES (%s, %s)
+                    """, (store_id, dry_storage_id))
+                    db.connection.commit()
+                    print("Dry storage item added to store.")
         except Exception as e:
             print(f"Error adding dry storage item to store: {e}")
-        finally:
-            db.cursor.close()
-            db.connection.close()
 
     @staticmethod
-    def remove(store_id: int, dry_storage_id: int):
+    def remove(store_id: int, dry_storage_id: int) -> None:
         """Remove a dry storage item from a store."""
-        db = DBEngine()
         try:
-            db.cursor.execute("""
-                DELETE FROM "StoreDryProduct"
-                WHERE "StoreID" = %s AND "DryStorageID" = %s
-            """, (store_id, dry_storage_id))
-            db.connection.commit()
-            print("Dry storage item removed from store.")
+            with DBEngine() as db:
+                if db.cursor and db.connection:
+                    db.cursor.execute("""
+                        DELETE FROM "StoreDryProduct"
+                        WHERE "StoreID" = %s AND "DryStorageID" = %s
+                    """, (store_id, dry_storage_id))
+                    db.connection.commit()
+                    print("Dry storage item removed from store.")
         except Exception as e:
             print(f"Error removing dry storage item from store: {e}")
-        finally:
-            db.cursor.close()
-            db.connection.close()
 
     @staticmethod
-    def view(store_id: int):
+    def view(store_id: int) -> List[Tuple[int, str, int, float, Optional[str], Optional[str], Optional[str]]]:
         """View dry storage items in a store."""
-        db = DBEngine()
         try:
-            db.cursor.execute("""
-                SELECT "DryStorageID", "Name", "Amount", "Price", "RecipeItem", "Chemical", "PackageType"
-                FROM "StoreDryProduct"
-                JOIN "Dry Storage Item" ON "StoreDryProduct"."DryStorageID" = "Dry Storage Item"."DryStorageItemID"
-                WHERE "StoreID" = %s
-            """, (store_id,))
-            items = db.cursor.fetchall()
-            return items
+            with DBEngine() as db:
+                if db.cursor:
+                    db.cursor.execute("""
+                        SELECT "DryStorageID", "Name", "Amount", "Price", "RecipeItem", "Chemical", "PackageType"
+                        FROM "StoreDryProduct"
+                        JOIN "Dry Storage Item" ON "StoreDryProduct"."DryStorageID" = "Dry Storage Item"."DryStorageItemID"
+                        WHERE "StoreID" = %s
+                    """, (store_id,))
+                    items = db.cursor.fetchall()
+                    return [(
+                        item[0],  # DryStorageID
+                        item[1],  # Name
+                        item[2],  # Amount
+                        item[3],  # Price
+                        item[4] if item[4] is not None else None,  # RecipeItem
+                        item[5] if item[5] is not None else None,  # Chemical
+                        item[6] if item[6] is not None else None   # PackageType
+                    ) for item in items]
+                # Explicit return to handle the case where db.cursor is None or an exception is caught
+                return []
         except Exception as e:
             print(f"Error viewing dry storage items in store: {e}")
-            return []
-        finally:
-            db.cursor.close()
-            db.connection.close()
+            return []  # Ensure return type matches
 
 class StoreFoodProduct:
+    """Class to manage food products in a store."""
+
     @staticmethod
-    def add(store_id: int, food_id: int):
+    def add(store_id: int, food_id: int) -> None:
         """Add a food item to a store."""
-        db = DBEngine()
         try:
-            db.cursor.execute("""
-                INSERT INTO "StoreFoodProduct" ("StoreID", "FoodID")
-                VALUES (%s, %s)
-            """, (store_id, food_id))
-            db.connection.commit()
-            print("Food item added to store.")
+            with DBEngine() as db:
+                if db.cursor and db.connection:
+                    db.cursor.execute("""
+                        INSERT INTO "StoreFoodProduct" ("StoreID", "FoodID")
+                        VALUES (%s, %s)
+                    """, (store_id, food_id))
+                    db.connection.commit()
+                    print("Food item added to store.")
         except Exception as e:
             print(f"Error adding food item to store: {e}")
-        finally:
-            db.cursor.close()
-            db.connection.close()
 
     @staticmethod
-    def remove(store_id: int, food_id: int):
+    def remove(store_id: int, food_id: int) -> None:
         """Remove a food item from a store."""
-        db = DBEngine()
         try:
-            db.cursor.execute("""
-                DELETE FROM "StoreFoodProduct"
-                WHERE "StoreID" = %s AND "FoodID" = %s
-            """, (store_id, food_id))
-            db.connection.commit()
-            print("Food item removed from store.")
+            with DBEngine() as db:
+                if db.cursor and db.connection:
+                    db.cursor.execute("""
+                        DELETE FROM "StoreFoodProduct"
+                        WHERE "StoreID" = %s AND "FoodID" = %s
+                    """, (store_id, food_id))
+                    db.connection.commit()
+                    print("Food item removed from store.")
         except Exception as e:
             print(f"Error removing food item from store: {e}")
-        finally:
-            db.cursor.close()
-            db.connection.close()
 
     @staticmethod
-    def view(store_id: int):
+    def view(store_id: int) -> List[Tuple[int, str, int, float, str, str]]:
         """View food items in a store."""
-        db = DBEngine()
         try:
-            db.cursor.execute("""
-                SELECT "FoodID", "Name", "Amount", "Price", "StorageCondition", "ExpiryDate"
-                FROM "StoreFoodProduct"
-                JOIN "Food Item" ON "StoreFoodProduct"."FoodID" = "Food Item"."FoodItemID"
-                WHERE "StoreID" = %s
-            """, (store_id,))
-            items = db.cursor.fetchall()
-            return items
+            with DBEngine() as db:
+                if db.cursor:
+                    db.cursor.execute("""
+                        SELECT "FoodID", "Name", "Amount", "Price", "StorageCondition", "ExpiryDate"
+                        FROM "StoreFoodProduct"
+                        JOIN "Food Item" ON "StoreFoodProduct"."FoodID" = "Food Item"."FoodItemID"
+                        WHERE "StoreID" = %s
+                    """, (store_id,))
+                    items = db.cursor.fetchall()
+                    return [(
+                        item[0],  # FoodID
+                        item[1],  # Name
+                        item[2],  # Amount
+                        item[3],  # Price
+                        item[4],  # StorageCondition
+                        item[5]   # ExpiryDate
+                    ) for item in items]
+                # Explicit return to handle the case where db.cursor is None or an exception is caught
+                return []
         except Exception as e:
             print(f"Error viewing food items in store: {e}")
-            return []
-        finally:
-            db.cursor.close()
-            db.connection.close()
+            return []  # Ensure return type matches
 
-def manage_store_items_menu():
+def manage_store_items_menu() -> None:
     """Manage Store Items with operations to add, remove, and view items."""
     while True:
         print("\nStore Item Management")
@@ -129,7 +141,7 @@ def manage_store_items_menu():
         else:
             print("Invalid choice, please select between 1 and 3.")
 
-def manage_store_dry_products():
+def manage_store_dry_products() -> None:
     """Manage Store Dry Products with add, remove, and view operations."""
     while True:
         print("\nStore Dry Product Management")
@@ -151,7 +163,7 @@ def manage_store_dry_products():
         else:
             print("Invalid choice, please select between 1 and 4.")
 
-def manage_store_food_products():
+def manage_store_food_products() -> None:
     """Manage Store Food Products with add, remove, and view operations."""
     while True:
         print("\nStore Food Product Management")
@@ -173,19 +185,19 @@ def manage_store_food_products():
         else:
             print("Invalid choice, please select between 1 and 4.")
 
-def add_dry_storage_item_to_store():
+def add_dry_storage_item_to_store() -> None:
     """Prompt user to add a dry storage item to a store."""
     store_id = int(input("Enter store ID: ").strip())
     dry_storage_id = int(input("Enter dry storage item ID: ").strip())
     StoreDryProduct.add(store_id, dry_storage_id)
 
-def remove_dry_storage_item_from_store():
+def remove_dry_storage_item_from_store() -> None:
     """Prompt user to remove a dry storage item from a store."""
     store_id = int(input("Enter store ID: ").strip())
     dry_storage_id = int(input("Enter dry storage item ID: ").strip())
     StoreDryProduct.remove(store_id, dry_storage_id)
 
-def view_dry_storage_items_in_store():
+def view_dry_storage_items_in_store() -> None:
     """Prompt user to view dry storage items in a store."""
     store_id = int(input("Enter store ID: ").strip())
     items = StoreDryProduct.view(store_id)
@@ -195,19 +207,19 @@ def view_dry_storage_items_in_store():
     else:
         print("No dry storage items found in this store.")
 
-def add_food_item_to_store():
+def add_food_item_to_store() -> None:
     """Prompt user to add a food item to a store."""
     store_id = int(input("Enter store ID: ").strip())
     food_id = int(input("Enter food item ID: ").strip())
     StoreFoodProduct.add(store_id, food_id)
 
-def remove_food_item_from_store():
+def remove_food_item_from_store() -> None:
     """Prompt user to remove a food item from a store."""
     store_id = int(input("Enter store ID: ").strip())
     food_id = int(input("Enter food item ID: ").strip())
     StoreFoodProduct.remove(store_id, food_id)
 
-def view_food_items_in_store():
+def view_food_items_in_store() -> None:
     """Prompt user to view food items in a store."""
     store_id = int(input("Enter store ID: ").strip())
     items = StoreFoodProduct.view(store_id)

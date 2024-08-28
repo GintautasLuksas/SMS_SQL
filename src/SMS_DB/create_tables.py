@@ -1,32 +1,42 @@
 import os
 import logging
 from src.db_engine import DBEngine
-import psycopg2
+import psycopg2  # type: ignore
 
 
-def create_tables():
-    # Initialize the logger
+def create_tables() -> None:
+    """
+    Creates the necessary tables in the database by executing SQL commands
+    from a specified SQL file.
+
+    The function connects to the database using the DBEngine class, reads SQL
+    commands from the 'SMS_tables.sql' file, and executes them to create tables.
+    If the table creation is successful, a success message is logged. If an
+    error occurs, it is logged, the transaction is rolled back, and the error
+    is raised.
+    """
     logging.basicConfig(level=logging.INFO)
     logger = logging.getLogger(__name__)
 
-    # Initialize the DBEngine using the existing class
     db_engine = DBEngine(logger=logger)
 
-    # Path to the SQL file containing the table creation commands
     sql_file_path = os.path.join(os.path.dirname(__file__), 'SMS_tables.sql')
 
-    # Read and execute the SQL script
     try:
         with open(sql_file_path, 'r') as file:
             sql_commands = file.read()
 
-        db_engine.cursor.execute(sql_commands)
-        db_engine.connection.commit()
-        logger.info('Tables created successfully.')
+        if db_engine.cursor and db_engine.connection:
+            db_engine.cursor.execute(sql_commands)
+            db_engine.connection.commit()
+            logger.info('Tables created successfully.')
+        else:
+            raise RuntimeError("Database connection or cursor is not initialized.")
 
     except (Exception, psycopg2.Error) as error:
         logger.error(f"Error creating tables: {error}")
-        db_engine.connection.rollback()
+        if db_engine.connection:
+            db_engine.connection.rollback()
         raise
 
 

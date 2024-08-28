@@ -19,7 +19,13 @@ HOST = os.getenv('HOST', HOST)
 PORT = int(os.getenv('PORT', PORT))
 
 def write_to_env_file():
-    """Write the current database connection information to the .env file."""
+    """
+    Write the current database connection information to the .env file.
+
+    Ensures that the .env file exists, and writes the current values of DB_NAME,
+    DB_USERNAME, DB_PASSWORD, HOST, and PORT to the file. This is useful for persisting
+    connection details used for database operations.
+    """
     # Ensure the directory exists
     os.makedirs(os.path.dirname(dotenv_path), exist_ok=True)
 
@@ -32,7 +38,13 @@ def write_to_env_file():
         file.write(f"PORT={PORT}\n")
 
 def create_database_and_tables():
-    """Create the database and tables."""
+    """
+    Create the database and tables.
+
+    Checks if the required connection information is available. If it is, it writes
+    the details to the .env file and imports and calls the function to create the database
+    tables. This function assumes that the .env file is used to configure database connections.
+    """
     # Ensure .env file is loaded and connection parameters are available
     if not all([DB_USERNAME, DB_PASSWORD]):
         print("Connection information is incomplete.")
@@ -46,7 +58,13 @@ def create_database_and_tables():
     create_tables()
 
 def database_management_menu():
-    """Display the database management menu and handle user input."""
+    """
+    Display the database management menu and handle user input.
+
+    Provides a menu-driven interface for the user to input database connection details,
+    generate the database and tables, or exit the menu. Updates the .env file with new
+    connection information if entered by the user.
+    """
     global DB_USERNAME, DB_PASSWORD, HOST, PORT
 
     while True:
@@ -58,7 +76,8 @@ def database_management_menu():
         choice = input("Enter your choice (1-3): ").strip()
 
         if choice == '1':
-            DB_NAME = 'SMS'  # Ensure DB_NAME is always 'SMS'
+            # Ensure DB_NAME is always 'SMS'
+            DB_NAME = 'SMS'
             DB_USERNAME = input("Enter username: ").strip()
             DB_PASSWORD = input("Enter password: ").strip()
             HOST = input(f"Enter host (default {HOST}): ").strip() or HOST
