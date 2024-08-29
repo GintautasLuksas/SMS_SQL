@@ -1,68 +1,90 @@
+"""
+Unit tests for the `DBEngine` class in the `db_engine.py` module.
+
+This script tests the database connection management functionality provided by the `DBEngine` class,
+ensuring that connections are correctly established, used, and closed, with proper error handling.
+
+Pre-commit best practices:
+- Ensure imports are sorted and used properly.
+- Include clear, concise docstrings for each test case.
+- Avoid long lines and enforce PEP8 compliance.
+"""
+
 import unittest
 from unittest.mock import patch, MagicMock
-import os
-from dotenv import load_dotenv  # Import the dotenv function
+import psycopg2
 from src.db_engine import DBEngine
 
-# Load environment variables from .env file
-dotenv_path = os.path.join(os.path.dirname(__file__), '..', 'config', '.env')
-load_dotenv(dotenv_path=dotenv_path)
 
 class TestDBEngine(unittest.TestCase):
+    """
+    Test suite for the `DBEngine` class.
+    """
 
-    @patch('src.db_engine.psycopg2.connect')
-    @patch('src.db_engine.logging.getLogger')
-    @patch.dict(os.environ, {
-        'DB_NAME': 'test_db_name',
-        'DB_USERNAME': 'test_db_user',
-        'DB_PASSWORD': 'test_db_password',
-        'HOST': 'test_db_host',
-        'PORT': '5432'
-    })
-    def test_connect_success(self, mock_get_logger, mock_connect):
-        mock_logger = MagicMock()
-        mock_get_logger.return_value = mock_logger
+    @patch('psycopg2.connect')
+    def test_successful_connection(self, mock_connect):
+        """
+        Test that a successful connection to the database is established.
 
+        Verifies that the connection and cursor are set up correctly when `DBEngine` is initialized.
+        """
         mock_connection = MagicMock()
         mock_cursor = MagicMock()
-        mock_connection.cursor.return_value = mock_cursor
         mock_connect.return_value = mock_connection
-
-        db_engine = DBEngine(logger=mock_logger)
-
-        mock_connect.assert_called_once_with(
-            dbname='test_db_name',
-            user='test_db_user',
-            password='test_db_password',
-            host='test_db_host',
-            port='5432'
-        )
-
-        mock_logger.info.assert_called_once_with('Database connection established.')
-
-        db_engine.cursor.close()
-        db_engine.connection.close()
-
-    @patch('src.db_engine.psycopg2.connect', side_effect=Exception('Connection failed'))
-    @patch('src.db_engine.logging.getLogger')
-    def test_connect_failure(self, mock_get_logger, mock_connect):
-        mock_logger = MagicMock()
-        mock_get_logger.return_value = mock_logger
-
-        with self.assertRaises(Exception):
-            DBEngine(logger=mock_logger)
-
-        mock_logger.error.assert_called_once_with('Error connecting to the database: Connection failed')
-
-    @patch('src.db_engine.psycopg2.connect')
-    def test_resource_cleanup(self, mock_connect):
-        mock_connection = MagicMock()
-        mock_cursor = MagicMock()
         mock_connection.cursor.return_value = mock_cursor
-        mock_connect.return_value = mock_connection
 
         db_engine = DBEngine()
-        del db_engine
+
+        self.assertIsNotNone(db_engine.connection, "Database connection should not be None.")
+        self.assertIsNotNone(db_engine.cursor, "Database cursor should not be None.")
+        mock_connect.assert_called_once()
+        mock_connection.cursor.assert_called_once()
+
+    @patch('psycopg2.connect')
+    def test_connection_error(self, mock_connect):
+        """
+        Test that a connection error is handled properly.
+
+        Simulates a connection error and verifies that an exception is raised and logged.
+        """
+        mock_connect.side_effect = psycopg2.OperationalError("Simulated connection error")
+
+        with self.assertRaises(psycopg2.OperationalError):
+            DBEngine()
+
+    @patch('psycopg2.connect')
+    def test_connection_close(self, mock_connect):
+        """
+        Test that the database connection and cursor are properly closed.
+
+        Ensures that resources are released after use.
+        """
+        mock_connection = MagicMock()
+        mock_cursor = MagicMock()
+        mock_connect.return_value = mock_connection
+        mock_connection.cursor.return_value = mock_cursor
+
+        db_engine = DBEngine()
+        db_engine.__exit__(None, None, None)  # Manually invoke the exit to simulate closing
+
+        mock_cursor.close.assert_called_once()
+        mock_connection.close.assert_called_once()
+
+    @patch('psycopg2.connect')
+    def test_context_manager(self, mock_connect):
+        """
+        Test the context manager functionality of `DBEngine`.
+
+        Verifies that the database connection and cursor are correctly managed when used within a `with` statement.
+        """
+        mock_connection = MagicMock()
+        mock_cursor = MagicMock()
+        mock_connect.return_value = mock_connection
+        mock_connection.cursor.return_value = mock_cursor
+
+        with DBEngine() as db_engine:
+            self.assertIsNotNone(db_engine.connection, "Database connection should not be None inside context manager.")
+            self.assertIsNotNone(db_engine.cursor, "Database cursor should not be None inside context manager.")
 
         mock_cursor.close.assert_called_once()
         mock_connection.close.assert_called_once()

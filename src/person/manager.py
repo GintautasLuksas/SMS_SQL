@@ -27,7 +27,7 @@ class Manager(Person):
 
     def display_salary(self) -> None:
         """Display the manager's monthly salary."""
-        print(f'{self.name}\'s monthly salary is: {self.monthly_salary}')
+        print(f"{self.name}'s monthly salary is: {self.monthly_salary}")
 
     def save(self) -> None:
         """Save a new manager or update an existing manager in the database."""
@@ -41,11 +41,13 @@ class Manager(Person):
         with DBEngine() as db:
             if db.cursor and db.connection:
                 try:
-                    db.cursor.execute("""
+                    db.cursor.execute(
+                        """
                         INSERT INTO "Manager" ("Name", "PhoneNumber", "Email", "Country", "MonthlySalary", "StoreID")
-                        VALUES (%s, %s, %s, %s, %s, %s)
-                        RETURNING "ManagerID"
-                    """, (self.name, self.phone, self.email, self.country, self.monthly_salary, self.store_id))
+                        VALUES (%s, %s, %s, %s, %s, %s) RETURNING "ManagerID"
+                        """,
+                        (self.name, self.phone, self.email, self.country, self.monthly_salary, self.store_id)
+                    )
                     self.id = db.cursor.fetchone()[0]
                     db.connection.commit()
                     print("Manager created successfully.")
@@ -60,11 +62,18 @@ class Manager(Person):
         with DBEngine() as db:
             if db.cursor and db.connection:
                 try:
-                    db.cursor.execute("""
+                    sql_query = (
+                        """
                         UPDATE "Manager"
-                        SET "Name" = %s, "PhoneNumber" = %s, "Email" = %s, "Country" = %s, "MonthlySalary" = %s, "StoreID" = %s
+                        SET "Name" = %s, "PhoneNumber" = %s, "Email" = %s,
+                        "Country" = %s, "MonthlySalary" = %s, "StoreID" = %s
                         WHERE "ManagerID" = %s
-                    """, (self.name, self.phone, self.email, self.country, self.monthly_salary, self.store_id, self.id))
+                        """
+                    )
+                    db.cursor.execute(
+                        sql_query,
+                        (self.name, self.phone, self.email, self.country, self.monthly_salary, self.store_id, self.id)
+                    )
                     db.connection.commit()
                     print("Manager updated successfully.")
                 except Exception as e:
@@ -89,10 +98,12 @@ class Manager(Person):
         with DBEngine() as db:
             if db.cursor and db.connection:
                 try:
-                    db.cursor.execute("""
+                    db.cursor.execute(
+                        """
                         SELECT "ManagerID", "Name", "PhoneNumber", "Email", "Country", "MonthlySalary", "StoreID"
                         FROM "Manager"
-                    """)
+                        """
+                    )
                     managers = db.cursor.fetchall()
                     return [
                         (
@@ -218,6 +229,7 @@ class Manager(Person):
             print("List of All Managers:")
             for m in managers:
                 print(
-                    f"ID: {m[0]}, Name: {m[1]}, Phone: {m[2]}, Email: {m[3]}, Country: {m[4]}, Salary: {m[5]}, Store ID: {m[6]}")
+                    f"ID: {m[0]}, Name: {m[1]}, Phone: {m[2]}, Email: {m[3]}, Country: {m[4]}, Salary: {m[5]}, Store ID: {m[6]}"
+                )
         else:
             print("No managers found.")
