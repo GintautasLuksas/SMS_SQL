@@ -7,10 +7,9 @@ from src.store.store import manage_store_menu
 from src.store.store_product import manage_store_items_menu
 from src.list_tables import list_tables
 from src.SMS_DB.database_management import database_management_menu
-from src.person.responsibilities  import responsibilities_menu
+from src.person.responsibilities import responsibilities_menu
 
-
-def main_menu():
+def main_menu() -> None:
     """Display the main menu and handle user input."""
     while True:
         print("\nMain Menu")
@@ -35,14 +34,14 @@ def main_menu():
         elif choice == '5':
             responsibilities_menu()
         elif choice == '6':
-            database_management_menu()  # Call the database management menu
+            database_management_menu()
         elif choice == '7':
             print("Exiting the application.")
             sys.exit()
         else:
             print("Invalid choice, please select between 1 and 7.")
 
-def store_menu():
+def store_menu() -> None:
     """Display the store menu and handle user input."""
     while True:
         print("\nStore Menu")
@@ -55,13 +54,13 @@ def store_menu():
         if choice == '1':
             manage_store_menu()
         elif choice == '2':
-            manage_store_items_menu()  # Call the imported function
+            manage_store_items_menu()
         elif choice == '3':
             break
         else:
             print("Invalid choice, please select between 1 and 3.")
 
-def people_menu():
+def people_menu() -> None:
     """Display the people menu and handle user input."""
     while True:
         print("\nPeople Menu")
@@ -83,7 +82,7 @@ def people_menu():
         else:
             print("Invalid choice, please select between 1 and 4.")
 
-def product_menu():
+def product_menu() -> None:
     """Display the product menu and handle user input."""
     while True:
         print("\nProduct Menu")
@@ -102,7 +101,7 @@ def product_menu():
         else:
             print("Invalid choice, please select between 1 and 3.")
 
-def structure_menu():
+def structure_menu() -> None:
     """Display database structure."""
     list_tables()
 

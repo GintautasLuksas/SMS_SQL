@@ -7,7 +7,7 @@ class TestStoreManager(unittest.TestCase):
     """Test suite for the `StoreManager` class."""
 
     @patch('src.person.storemanager.DBEngine')
-    def test_add_store_manager(self, mock_db_engine):
+    def test_add_store_manager(self, mock_db_engine: MagicMock) -> None:
         """Test adding a new store manager."""
         mock_connection = MagicMock()
         mock_cursor = MagicMock()
@@ -29,7 +29,7 @@ class TestStoreManager(unittest.TestCase):
         self.assertEqual(store_manager.id, 99)
 
     @patch('src.person.storemanager.DBEngine')
-    def test_update_store_manager(self, mock_db_engine):
+    def test_update_store_manager(self, mock_db_engine: MagicMock) -> None:
         """Test updating an existing store manager."""
         mock_connection = MagicMock()
         mock_cursor = MagicMock()
@@ -49,7 +49,7 @@ class TestStoreManager(unittest.TestCase):
         )
 
     @patch('src.person.storemanager.DBEngine')
-    def test_delete_store_manager(self, mock_db_engine):
+    def test_delete_store_manager(self, mock_db_engine: MagicMock) -> None:
         """Test deleting a store manager."""
         mock_connection = MagicMock()
         mock_cursor = MagicMock()
@@ -65,7 +65,7 @@ class TestStoreManager(unittest.TestCase):
         self.assertIsNone(store_manager.id)
 
     @patch('src.person.storemanager.DBEngine')
-    def test_view_all_store_managers(self, mock_db_engine):
+    def test_view_all_store_managers(self, mock_db_engine: MagicMock) -> None:
         """Test viewing all store managers."""
         mock_connection = MagicMock()
         mock_cursor = MagicMock()
@@ -82,7 +82,7 @@ class TestStoreManager(unittest.TestCase):
         self.assertEqual(store_managers[1].name, "Birutė Dambrauskienė")
 
     @patch('src.person.storemanager.DBEngine')
-    def test_display_all_salaries(self, mock_db_engine):
+    def test_display_all_salaries(self, mock_db_engine: MagicMock) -> None:
         """Test displaying all store managers' salaries."""
         mock_connection = MagicMock()
         mock_cursor = MagicMock()

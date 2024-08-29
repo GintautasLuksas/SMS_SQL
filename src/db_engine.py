@@ -1,7 +1,7 @@
 import os
-import psycopg2  # type: ignore
-from psycopg2.extensions import connection as Psycopg2Connection, cursor as Psycopg2Cursor  # type: ignore
-from dotenv import load_dotenv  # type: ignore
+import psycopg2
+from psycopg2.extensions import connection as Psycopg2Connection, cursor as Psycopg2Cursor
+from dotenv import load_dotenv
 import logging
 from typing import Optional, Type, Any
 

@@ -14,7 +14,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 from src.store.store import Store
 from src.db_engine import DBEngine
-
+from typing import List, Tuple, Optional
 
 class TestStore(unittest.TestCase):
     """
@@ -22,7 +22,7 @@ class TestStore(unittest.TestCase):
     """
 
     @patch('src.store.store.DBEngine')
-    def test_create_new_store(self, mock_db_engine):
+    def test_create_new_store(self, mock_db_engine: MagicMock) -> None:
         """
         Test that a new store is correctly created and assigned an ID.
 
@@ -41,7 +41,7 @@ class TestStore(unittest.TestCase):
         mock_cursor.execute.assert_called_once()
 
     @patch('src.store.store.DBEngine')
-    def test_delete_store(self, mock_db_engine):
+    def test_delete_store(self, mock_db_engine: MagicMock) -> None:
         """
         Test that a store is correctly deleted from the database.
 
@@ -59,7 +59,7 @@ class TestStore(unittest.TestCase):
         mock_cursor.execute.assert_called_once_with('DELETE FROM "Store" WHERE "StoreID" = %s', (1,))
 
     @patch('src.store.store.DBEngine')
-    def test_view_all_stores(self, mock_db_engine):
+    def test_view_all_stores(self, mock_db_engine: MagicMock) -> None:
         """
         Test that all stores are correctly retrieved from the database.
 
@@ -74,12 +74,15 @@ class TestStore(unittest.TestCase):
         mock_db_engine.return_value.connection = mock_connection
         mock_db_engine.return_value.cursor = mock_cursor
 
-        stores = Store.view_all()
+        stores: Optional[List[Tuple[int, str]]] = Store.view_all()
 
-        self.assertEqual(len(stores), 2)
-        self.assertEqual(stores[0][1], "Store A")
-        self.assertEqual(stores[1][1], "Store B")
-
+        self.assertIsNotNone(stores)  # Ensure that stores is not None
+        if stores:
+            self.assertEqual(len(stores), 2)
+            self.assertEqual(stores[0][1], "Store A")
+            self.assertEqual(stores[1][1], "Store B")
+        else:
+            self.fail("Expected a list of stores, but got None.")
 
 if __name__ == '__main__':
     unittest.main()

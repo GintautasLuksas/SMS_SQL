@@ -1,7 +1,7 @@
 import os
 import logging
 from src.db_engine import DBEngine
-import psycopg2  # type: ignore
+import psycopg2
 
 
 def create_tables() -> None:

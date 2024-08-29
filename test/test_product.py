@@ -1,19 +1,8 @@
-"""
-Unit tests for the `DryStorageItem` and `FoodItem` classes in the `product.py` module.
-
-This script tests the functionality of CRUD operations on `DryStorageItem` and `FoodItem` classes,
-ensuring correct interactions with the database.
-
-Pre-commit best practices:
-- Ensure imports are sorted and used properly.
-- Include clear, concise docstrings for each test case.
-- Avoid long lines and enforce PEP8 compliance.
-"""
-
 import unittest
 from unittest.mock import patch, MagicMock
 from src.product.product import DryStorageItem, FoodItem
 from src.db_engine import DBEngine
+from typing import Optional
 
 class TestDryStorageItem(unittest.TestCase):
     """
@@ -21,7 +10,7 @@ class TestDryStorageItem(unittest.TestCase):
     """
 
     @patch('src.product.product.DBEngine')
-    def test_save_new_dry_storage_item(self, mock_db_engine):
+    def test_save_new_dry_storage_item(self, mock_db_engine: MagicMock) -> None:
         """
         Test that a new dry storage item is correctly saved and assigned an ID.
 
@@ -40,7 +29,7 @@ class TestDryStorageItem(unittest.TestCase):
         mock_cursor.execute.assert_called_once()
 
     @patch('src.product.product.DBEngine')
-    def test_delete_dry_storage_item(self, mock_db_engine):
+    def test_delete_dry_storage_item(self, mock_db_engine: MagicMock) -> None:
         """
         Test that a dry storage item is correctly deleted from the database.
 
@@ -63,7 +52,7 @@ class TestFoodItem(unittest.TestCase):
     """
 
     @patch('src.product.product.DBEngine')
-    def test_view_all_food_items(self, mock_db_engine):
+    def test_view_all_food_items(self, mock_db_engine: MagicMock) -> None:
         """
         Test that all food items are correctly retrieved from the database.
 
@@ -85,7 +74,7 @@ class TestFoodItem(unittest.TestCase):
         self.assertEqual(items[1].name, "Bread")
 
     @patch('src.product.product.DBEngine')
-    def test_find_food_item_by_id(self, mock_db_engine):
+    def test_find_food_item_by_id(self, mock_db_engine: MagicMock) -> None:
         """
         Test that a food item is correctly retrieved by ID.
 
@@ -97,14 +86,15 @@ class TestFoodItem(unittest.TestCase):
         mock_db_engine.return_value.connection = mock_connection
         mock_db_engine.return_value.cursor = mock_cursor
 
-        item = FoodItem.find_by_id(1)
+        item: Optional[FoodItem] = FoodItem.find_by_id(1)
 
         self.assertIsNotNone(item)
-        self.assertEqual(item.name, "Apple")
-        self.assertEqual(item.amount, 10)
-        self.assertEqual(item.price, 5)
-        self.assertEqual(item.storage_condition, "Cool")
-        self.assertEqual(item.expiry_date, "2024-12-31")
+        if item:
+            self.assertEqual(item.name, "Apple")
+            self.assertEqual(item.amount, 10)
+            self.assertEqual(item.price, 5)
+            self.assertEqual(item.storage_condition, "Cool")
+            self.assertEqual(item.expiry_date, "2024-12-31")
 
 if __name__ == '__main__':
     unittest.main()

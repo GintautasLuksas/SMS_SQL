@@ -15,6 +15,8 @@ from unittest.mock import patch, MagicMock
 import psycopg2
 from io import StringIO
 from src.list_tables import list_tables
+from typing import Any
+
 
 class TestListTables(unittest.TestCase):
     """
@@ -22,7 +24,7 @@ class TestListTables(unittest.TestCase):
     """
 
     @patch('src.list_tables.DBEngine')
-    def test_list_tables_no_tables(self, mock_db_engine):
+    def test_list_tables_no_tables(self, mock_db_engine: MagicMock) -> None:
         """
         Test that `list_tables` handles the scenario where no tables are present.
 
@@ -41,7 +43,7 @@ class TestListTables(unittest.TestCase):
 
     @patch('src.list_tables.DBEngine')
     @patch('src.list_tables.logger')
-    def test_list_tables_db_error(self, mock_logger, mock_db_engine):
+    def test_list_tables_db_error(self, mock_logger: MagicMock, mock_db_engine: MagicMock) -> None:
         """
         Test that `list_tables` handles database errors gracefully.
 
@@ -53,6 +55,7 @@ class TestListTables(unittest.TestCase):
         list_tables()
 
         mock_logger.error.assert_called_once_with("Error retrieving tables: Simulated database error")
+
 
 if __name__ == '__main__':
     unittest.main()

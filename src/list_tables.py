@@ -1,6 +1,6 @@
 import os
-from dotenv import load_dotenv  # type: ignore
-import psycopg2  # type: ignore
+from dotenv import load_dotenv
+import psycopg2
 from src.db_engine import DBEngine
 import logging
 
@@ -11,6 +11,7 @@ dotenv_path = os.path.join(os.path.dirname(__file__), '../config/.env')
 load_dotenv(dotenv_path=dotenv_path)
 
 def list_tables() -> None:
+
     """
     Retrieves and prints the names of all tables in the public schema of the PostgreSQL database.
 

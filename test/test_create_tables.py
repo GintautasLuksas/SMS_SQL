@@ -16,14 +16,19 @@ import psycopg2
 from unittest import mock  # Updated import for mock
 from src.SMS_DB.create_tables import create_tables
 from src.db_engine import DBEngine
+from typing import Any, ClassVar
+
 
 class TestCreateTables(unittest.TestCase):
     """
     Test suite for `create_tables` function.
     """
+    db_engine: ClassVar[DBEngine]
+    cursor: ClassVar[Any]
+    connection: ClassVar[Any]
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         """
         Set up the test environment.
 
@@ -35,7 +40,7 @@ class TestCreateTables(unittest.TestCase):
         cls.connection = cls.db_engine.connection
 
     @classmethod
-    def tearDownClass(cls):
+    def tearDownClass(cls) -> None:
         """
         Tear down the test environment.
 
@@ -46,7 +51,7 @@ class TestCreateTables(unittest.TestCase):
         if cls.connection:
             cls.connection.close()
 
-    def setUp(self):
+    def setUp(self) -> None:
         """
         Initialize test case setup.
 
@@ -54,7 +59,7 @@ class TestCreateTables(unittest.TestCase):
         """
         self.clear_database()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """
         Clean up after each test case.
 
@@ -62,7 +67,7 @@ class TestCreateTables(unittest.TestCase):
         """
         self.clear_database()
 
-    def clear_database(self):
+    def clear_database(self) -> None:
         """
         Helper method to remove all tables from the database.
 
@@ -83,7 +88,7 @@ class TestCreateTables(unittest.TestCase):
             self.connection.rollback()
             print(f"Error clearing database: {e}")
 
-    def test_create_tables_success(self):
+    def test_create_tables_success(self) -> None:
         """
         Test that the `create_tables` function creates all necessary tables successfully.
 
@@ -104,7 +109,7 @@ class TestCreateTables(unittest.TestCase):
         except (Exception, psycopg2.Error) as error:
             self.fail(f"create_tables() raised an exception: {error}")
 
-    def test_create_tables_error_handling(self):
+    def test_create_tables_error_handling(self) -> None:
         """
         Test that `create_tables` function handles errors gracefully.
 
@@ -115,6 +120,7 @@ class TestCreateTables(unittest.TestCase):
             mock_connect.side_effect = psycopg2.OperationalError("Simulated connection error")
             with self.assertRaises(psycopg2.OperationalError):
                 create_tables()
+
 
 if __name__ == '__main__':
     unittest.main()

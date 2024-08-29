@@ -1,111 +1,172 @@
-# src/person/storemanager.py
-
+from typing import Optional, List
 from src.db_engine import DBEngine
 from src.person.person import Person
 
+
 class StoreManager(Person):
+    """
+    Represents a store manager in the system.
+    """
+
     def __init__(self, name: str, phone: int, email: str, country: str, store_id: int,
-                 monthly_salary: int, petty_cash: int, id: int = None):
+                 monthly_salary: int, petty_cash: int, id: Optional[int] = None) -> None:
+        """
+        Initialize a new store manager with the given details.
+
+        Args:
+            name (str): The name of the store manager.
+            phone (int): The phone number of the store manager.
+            email (str): The email address of the store manager.
+            country (str): The country of the store manager.
+            store_id (int): The ID of the store where the manager works.
+            monthly_salary (int): The monthly salary of the store manager.
+            petty_cash (int): The petty cash amount for the store manager.
+            id (Optional[int], optional): The unique identifier for the store manager. Defaults to None.
+        """
         super().__init__(name, phone, email, country, id)
         self.store_id = store_id
         self.monthly_salary = monthly_salary
         self.petty_cash = petty_cash
 
-    def display_salary(self):
-        """Display the store manager's monthly salary."""
+    def display_salary(self) -> None:
+        """
+        Display the store manager's monthly salary.
+        """
         print(f"{self.name}'s monthly salary is: {self.monthly_salary}")
 
-    def save(self):
-        """Save a new store manager or update an existing store manager in the database."""
+    def save(self) -> None:
+        """
+        Save a new store manager or update an existing store manager in the database.
+        """
         if self.id is None:
             self._create_store_manager()
         else:
             self._update_store_manager()
 
-    def _create_store_manager(self):
-        """Insert a new store manager into the database."""
+    def _create_store_manager(self) -> None:
+        """
+        Insert a new store manager into the database.
+        """
         db = DBEngine()
+        connection = db.connection
+        cursor = db.cursor
+        if cursor is None or connection is None:
+            print("Database connection not established.")
+            return
         try:
-            db.cursor.execute("""
+            cursor.execute("""
                 INSERT INTO "Store Manager" ("StoreID", "Name", "Country", "Email", "PhoneNumber", "MonthlySalary", "PettyCash")
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
                 RETURNING "StoreManagerID"
             """, (self.store_id, self.name, self.country, self.email, self.phone, self.monthly_salary, self.petty_cash))
-            self.id = db.cursor.fetchone()[0]
-            db.connection.commit()
+            self.id = cursor.fetchone()[0]
+            connection.commit()
             print("Store Manager created successfully.")
         except Exception as e:
             print(f"Error creating store manager: {e}")
         finally:
-            db.cursor.close()
-            db.connection.close()
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
 
-    def _update_store_manager(self):
-        """Update an existing store manager's information."""
+    def _update_store_manager(self) -> None:
+        """
+        Update an existing store manager's information.
+        """
         db = DBEngine()
+        connection = db.connection
+        cursor = db.cursor
+        if cursor is None or connection is None:
+            print("Database connection not established.")
+            return
         try:
-            db.cursor.execute("""
+            cursor.execute("""
                 UPDATE "Store Manager"
                 SET "StoreID" = %s, "Name" = %s, "Country" = %s, "Email" = %s, "PhoneNumber" = %s, "MonthlySalary" = %s, "PettyCash" = %s
                 WHERE "StoreManagerID" = %s
-            """, (self.store_id, self.name, self.country, self.email, self.phone, self.monthly_salary, self.petty_cash, self.id))
-            db.connection.commit()
+            """, (self.store_id, self.name, self.country, self.email, self.phone, self.monthly_salary, self.petty_cash,
+                  self.id))
+            connection.commit()
             print("Store Manager updated successfully.")
         except Exception as e:
             print(f"Error updating store manager: {e}")
         finally:
-            db.cursor.close()
-            db.connection.close()
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
 
-    def delete(self):
-        """Delete a store manager from the database."""
+    def delete(self) -> None:
+        """
+        Delete a store manager from the database.
+        """
         if self.id is not None:
             db = DBEngine()
+            connection = db.connection
+            cursor = db.cursor
+            if cursor is None or connection is None:
+                print("Database connection not established.")
+                return
             try:
-                db.cursor.execute('DELETE FROM "Store Manager" WHERE "StoreManagerID" = %s', (self.id,))
-                db.connection.commit()
+                cursor.execute('DELETE FROM "Store Manager" WHERE "StoreManagerID" = %s', (self.id,))
+                connection.commit()
                 self.id = None
                 print("Store Manager deleted successfully.")
             except Exception as e:
                 print(f"Error deleting store manager: {e}")
             finally:
-                db.cursor.close()
-                db.connection.close()
+                if cursor:
+                    cursor.close()
+                if connection:
+                    connection.close()
         else:
             print("Store Manager ID is not set.")
 
     @classmethod
-    def view_all(cls):
-        """View all store managers in the table."""
+    def view_all(cls) -> List['StoreManager']:
+        """
+        View all store managers in the table.
+        """
         db = DBEngine()
+        connection = db.connection
+        cursor = db.cursor
+        if cursor is None or connection is None:
+            print("Database connection not established.")
+            return []
         try:
-            db.cursor.execute("""
+            cursor.execute("""
                 SELECT "StoreManagerID", "StoreID", "Name", "Country", "Email", "PhoneNumber", "MonthlySalary", "PettyCash"
                 FROM "Store Manager"
             """)
-            store_managers = db.cursor.fetchall()
+            store_managers = cursor.fetchall()
             return [
                 cls(
-                    id=sm[0],
-                    store_id=sm[1],
                     name=sm[2],
-                    country=sm[3],
-                    email=sm[4],
                     phone=sm[5],
+                    email=sm[4],
+                    country=sm[3],
+                    store_id=sm[1],
                     monthly_salary=sm[6],
-                    petty_cash=sm[7]
+                    petty_cash=sm[7],
+                    id=sm[0]
                 )
                 for sm in store_managers
             ]
         except Exception as e:
             print(f"Error retrieving store managers: {e}")
+            return []
         finally:
-            db.cursor.close()
-            db.connection.close()
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
 
     @classmethod
-    def display_all_salaries(cls):
-        """Display all store managers' salaries."""
+    def display_all_salaries(cls) -> None:
+        """
+        Display all store managers' salaries.
+        """
         store_managers = cls.view_all()
         if store_managers:
             print("Salaries of All Store Managers:")
@@ -115,9 +176,10 @@ class StoreManager(Person):
             print("No store managers found.")
 
 
-
-def manage_store_manager_menu():
-    """Store Manager management menu with all options."""
+def manage_store_manager_menu() -> None:
+    """
+    Store Manager management menu with all options.
+    """
     while True:
         print("\nStore Manager Management")
         print("1. Add Store Manager")
@@ -142,10 +204,13 @@ def manage_store_manager_menu():
         elif choice == '6':
             break
         else:
-            print("Invalid choice, please select between 1 and 7.")
+            print("Invalid choice, please select between 1 and 6.")
 
-def add_store_manager():
-    """Add a new store manager."""
+
+def add_store_manager() -> None:
+    """
+    Add a new store manager.
+    """
     try:
         name = input("Enter store manager's name: ").strip()
         phone = int(input("Enter store manager's phone number: ").strip())
@@ -161,58 +226,98 @@ def add_store_manager():
     except ValueError:
         print("Invalid input. Please enter the correct data type.")
 
-def edit_store_manager():
-    """Edit an existing store manager."""
+
+def edit_store_manager() -> None:
+    """
+    Edit an existing store manager.
+    """
     try:
         manager_id = int(input("Enter the ID of the store manager to edit: ").strip())
         db = DBEngine()
-        db.cursor.execute('SELECT * FROM "Store Manager" WHERE "StoreManagerID" = %s', (manager_id,))
-        sm_data = db.cursor.fetchone()
-        if sm_data:
-            name = input(f"Enter new name (current: {sm_data[2]}): ").strip() or sm_data[2]
-            phone = input(f"Enter new phone number (current: {sm_data[5]}): ").strip()
-            phone = int(phone) if phone else sm_data[5]
-            email = input(f"Enter new email (current: {sm_data[4]}): ").strip() or sm_data[4]
-            country = input(f"Enter new country (current: {sm_data[3]}): ").strip() or sm_data[3]
-            store_id = input(f"Enter new store ID (current: {sm_data[1]}): ").strip()
-            store_id = int(store_id) if store_id else sm_data[1]
-            monthly_salary = input(f"Enter new monthly salary (current: {sm_data[6]}): ").strip()
-            monthly_salary = int(monthly_salary) if monthly_salary else sm_data[6]
-            petty_cash = input(f"Enter new petty cash (current: {sm_data[7]}): ").strip()
-            petty_cash = int(petty_cash) if petty_cash else sm_data[7]
+        connection = db.connection
+        cursor = db.cursor
+        if cursor is None or connection is None:
+            print("Database connection not established.")
+            return
+        try:
+            cursor.execute('SELECT * FROM "Store Manager" WHERE "StoreManagerID" = %s', (manager_id,))
+            sm_data = cursor.fetchone()
+            if sm_data:
+                name = input(f"Enter new name (current: {sm_data[2]}): ").strip() or sm_data[2]
 
-            store_manager = StoreManager(name, phone, email, country, store_id, monthly_salary, petty_cash, manager_id)
-            store_manager.save()
-            print("Store Manager updated successfully.")
-        else:
-            print("Store Manager not found.")
+                # Correctly handle phone input
+                phone_input = input(f"Enter new phone number (current: {sm_data[5]}): ").strip()
+                phone = int(phone_input) if phone_input else sm_data[5]
+
+                email = input(f"Enter new email (current: {sm_data[4]}): ").strip() or sm_data[4]
+                country = input(f"Enter new country (current: {sm_data[3]}): ").strip() or sm_data[3]
+
+                # Correctly handle store_id input
+                store_id_input = input(f"Enter new store ID (current: {sm_data[1]}): ").strip()
+                store_id = int(store_id_input) if store_id_input else sm_data[1]
+
+                # Correctly handle monthly_salary input
+                monthly_salary_input = input(f"Enter new monthly salary (current: {sm_data[6]}): ").strip()
+                monthly_salary = int(monthly_salary_input) if monthly_salary_input else sm_data[6]
+
+                # Correctly handle petty_cash input
+                petty_cash_input = input(f"Enter new petty cash (current: {sm_data[7]}): ").strip()
+                petty_cash = int(petty_cash_input) if petty_cash_input else sm_data[7]
+
+                store_manager = StoreManager(
+                    name=name,
+                    phone=phone,
+                    email=email,
+                    country=country,
+                    store_id=store_id,
+                    monthly_salary=monthly_salary,
+                    petty_cash=petty_cash,
+                    id=manager_id
+                )
+                store_manager.save()
+                print("Store Manager updated successfully.")
+            else:
+                print("Store Manager not found.")
+        except Exception as e:
+            print(f"Error updating store manager: {e}")
+        finally:
+            if cursor:
+                cursor.close()
+            if connection:
+                connection.close()
     except ValueError:
         print("Invalid input. Please enter the correct data type.")
-    except Exception as e:
-        print(f"Error editing store manager: {e}")
-    finally:
-        db.cursor.close()
-        db.connection.close()
 
-def delete_store_manager():
-    """Delete an existing store manager."""
+
+def delete_store_manager() -> None:
+    """
+    Delete a store manager.
+    """
     try:
         manager_id = int(input("Enter the ID of the store manager to delete: ").strip())
-        store_manager = StoreManager(name='', phone=0, email='', country='', store_id=0, monthly_salary=0, petty_cash=0, id=manager_id)
+        store_manager = StoreManager(name="", phone=0, email="", country="", store_id=0, monthly_salary=0, petty_cash=0,
+                                     id=manager_id)
         store_manager.delete()
-        print("Store Manager deleted successfully.")
     except ValueError:
-        print("Invalid ID. Please enter a number.")
+        print("Invalid input. Please enter the correct data type.")
 
-def view_all_store_managers():
-    """View all store managers."""
+
+def view_all_store_managers() -> None:
+    """
+    View all store managers.
+    """
     store_managers = StoreManager.view_all()
     if store_managers:
+        print("List of All Store Managers:")
         for sm in store_managers:
-            print(f"ID: {sm.id}, Store ID: {sm.store_id}, Name: {sm.name}, Country: {sm.country}, Email: {sm.email}, Phone: {sm.phone}, Monthly Salary: {sm.monthly_salary}, Petty Cash: {sm.petty_cash}")
+            print(
+                f"ID: {sm.id}, Name: {sm.name}, Phone: {sm.phone}, Email: {sm.email}, Country: {sm.country}, StoreID: {sm.store_id}, Salary: {sm.monthly_salary}, Petty Cash: {sm.petty_cash}")
     else:
         print("No store managers found.")
 
-def display_all_salaries():
-    """Display all store managers' salaries."""
+
+def display_all_salaries() -> None:
+    """
+    Display all store managers' salaries.
+    """
     StoreManager.display_all_salaries()

@@ -2,14 +2,12 @@ from typing import Optional, List, Tuple
 from src.db_engine import DBEngine
 from src.person.person import Person
 
-
 class Manager(Person):
     """Represents a manager in a store, extending from Person."""
 
     def __init__(self, name: str, phone: int, email: str, country: str, monthly_salary: int, store_id: int,
                  id: Optional[int] = None) -> None:
-        """
-        Initialize a new Manager instance.
+        """Initialize a new Manager instance.
 
         Args:
             name (str): The manager's name.
@@ -20,10 +18,9 @@ class Manager(Person):
             store_id (int): The ID of the store where the manager works.
             id (Optional[int]): The manager's ID in the database. Defaults to None.
         """
-        super().__init__(name, phone, email, country)
+        super().__init__(name, phone, email, country, id)
         self.monthly_salary = monthly_salary
         self.store_id = store_id
-        self.id = id
 
     def display_salary(self) -> None:
         """Display the manager's monthly salary."""
@@ -93,7 +90,7 @@ class Manager(Person):
                         print(f"Error deleting manager: {e}")
 
     @classmethod
-    def view_all(cls) -> List[Tuple[Optional[int], str, int, str, str, int, int]]:
+    def view_all(cls) -> None:
         """View all managers in the table."""
         with DBEngine() as db:
             if db.cursor and db.connection:
@@ -105,33 +102,21 @@ class Manager(Person):
                         """
                     )
                     managers = db.cursor.fetchall()
-                    return [
-                        (
-                            row[0],
-                            row[1],
-                            row[2],
-                            row[3],
-                            row[4],
-                            row[5],
-                            row[6]
-                        )
-                        for row in managers
-                    ]
+                    if managers:
+                        print("List of All Managers:")
+                        for row in managers:
+                            print(
+                                f"ID: {row[0]}, Name: {row[1]}, Phone: {row[2]}, Email: {row[3]}, Country: {row[4]}, Salary: {row[5]}, Store ID: {row[6]}"
+                            )
+                    else:
+                        print("No managers found.")
                 except Exception as e:
                     print(f"Error retrieving managers: {e}")
-                    return []
-            return []
 
     @classmethod
     def display_all_salaries(cls) -> None:
         """Display all managers' salaries."""
-        managers = cls.view_all()
-        if managers:
-            print("Salaries of All Managers:")
-            for m in managers:
-                print(f"ID: {m[0]}, Name: {m[1]}, Salary: {m[5]}")
-        else:
-            print("No managers found.")
+        cls.view_all()  # Ensure view_all is called to display manager details including salaries.
 
     @classmethod
     def manage_managers(cls) -> None:
@@ -155,7 +140,7 @@ class Manager(Person):
             elif choice == '3':
                 cls.delete_manager()
             elif choice == '4':
-                cls.view_all_managers()
+                cls.view_all()  # Directly use the updated view_all method.
             elif choice == '5':
                 cls.display_all_salaries()
             elif choice == '6':
@@ -220,16 +205,3 @@ class Manager(Person):
             print("Manager deleted successfully.")
         except ValueError:
             print("Invalid input. Please enter the correct data type.")
-
-    @classmethod
-    def view_all_managers(cls) -> None:
-        """View all managers."""
-        managers = cls.view_all()
-        if managers:
-            print("List of All Managers:")
-            for m in managers:
-                print(
-                    f"ID: {m[0]}, Name: {m[1]}, Phone: {m[2]}, Email: {m[3]}, Country: {m[4]}, Salary: {m[5]}, Store ID: {m[6]}"
-                )
-        else:
-            print("No managers found.")

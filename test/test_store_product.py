@@ -21,7 +21,7 @@ class TestStoreDryProduct(unittest.TestCase):
     """
 
     @patch('src.store.store_product.DBEngine')
-    def test_add_dry_storage_item_to_store(self, mock_db_engine):
+    def test_add_dry_storage_item_to_store(self, mock_db_engine: MagicMock) -> None:
         """
         Test adding a dry storage item to a store.
 
@@ -42,7 +42,7 @@ class TestStoreDryProduct(unittest.TestCase):
         )
 
     @patch('src.store.store_product.DBEngine')
-    def test_remove_dry_storage_item_from_store(self, mock_db_engine):
+    def test_remove_dry_storage_item_from_store(self, mock_db_engine: MagicMock) -> None:
         """
         Test removing a dry storage item from a store.
 
@@ -63,7 +63,7 @@ class TestStoreDryProduct(unittest.TestCase):
         )
 
     @patch('src.store.store_product.DBEngine')
-    def test_view_dry_storage_items_in_store(self, mock_db_engine):
+    def test_view_dry_storage_items_in_store(self, mock_db_engine: MagicMock) -> None:
         """
         Test viewing dry storage items in a store.
 
@@ -90,7 +90,7 @@ class TestStoreFoodProduct(unittest.TestCase):
     """
 
     @patch('src.store.store_product.DBEngine')
-    def test_add_food_item_to_store(self, mock_db_engine):
+    def test_add_food_item_to_store(self, mock_db_engine: MagicMock) -> None:
         """
         Test adding a food item to a store.
 
@@ -111,7 +111,7 @@ class TestStoreFoodProduct(unittest.TestCase):
         )
 
     @patch('src.store.store_product.DBEngine')
-    def test_remove_food_item_from_store(self, mock_db_engine):
+    def test_remove_food_item_from_store(self, mock_db_engine: MagicMock) -> None:
         """
         Test removing a food item from a store.
 
@@ -132,7 +132,7 @@ class TestStoreFoodProduct(unittest.TestCase):
         )
 
     @patch('src.store.store_product.DBEngine')
-    def test_view_food_items_in_store(self, mock_db_engine):
+    def test_view_food_items_in_store(self, mock_db_engine: MagicMock) -> None:
         """
         Test viewing food items in a store.
 
