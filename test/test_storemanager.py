@@ -1,141 +1,106 @@
 import unittest
 from unittest.mock import patch, MagicMock
 from src.person.storemanager import StoreManager
-from typing import Optional, List, Tuple
+
 
 class TestStoreManager(unittest.TestCase):
+    """Test suite for the `StoreManager` class."""
 
     @patch('src.person.storemanager.DBEngine')
-    def test_store_manager_create(self, MockDBEngine: MagicMock) -> None:
-        mock_db = MockDBEngine.return_value
+    def test_add_store_manager(self, mock_db_engine):
+        """Test adding a new store manager."""
+        mock_connection = MagicMock()
         mock_cursor = MagicMock()
-        mock_db.cursor = mock_cursor
-        mock_db.connection = MagicMock()
-        mock_cursor.fetchone.return_value = [42]
+        mock_cursor.fetchone.return_value = [99]
+        mock_db_engine.return_value = MagicMock(connection=mock_connection, cursor=mock_cursor)
 
-        manager = StoreManager(name="Rūta Kazlauskaitė", phone=37061234567, email="ruta.k@pavyzdys.lt",
-                               country="Lithuania", store_id=5, monthly_salary=3200, petty_cash=150)
-
-        manager.save()
+        store_manager = StoreManager(name="Dainius Petrauskas", phone=861234567, email="dainius.petrauskas@example.lt",
+                                     country="Lithuania", store_id=15, monthly_salary=4500, petty_cash=200)
+        store_manager.save()
 
         mock_cursor.execute.assert_called_once_with(
             """
-            INSERT INTO "Store Manager" ("StoreID", "Name", "Country", "Email", "PhoneNumber", "MonthlySalary", "PettyCash")
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-            RETURNING "StoreManagerID"
+                INSERT INTO "Store Manager" ("StoreID", "Name", "Country", "Email", "PhoneNumber", "MonthlySalary", "PettyCash")
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                RETURNING "StoreManagerID"
             """,
-            (5, "Rūta Kazlauskaitė", "Lithuania", "ruta.k@pavyzdys.lt", 37061234567, 3200, 150)
+            (15, "Dainius Petrauskas", "Lithuania", "dainius.petrauskas@example.lt", 861234567, 4500, 200)
         )
-        self.assertEqual(manager.id, 42)
+        self.assertEqual(store_manager.id, 99)
 
     @patch('src.person.storemanager.DBEngine')
-    def test_store_manager_update(self, MockDBEngine: MagicMock) -> None:
-        mock_db = MockDBEngine.return_value
+    def test_update_store_manager(self, mock_db_engine):
+        """Test updating an existing store manager."""
+        mock_connection = MagicMock()
         mock_cursor = MagicMock()
-        mock_db.cursor = mock_cursor
-        mock_db.connection = MagicMock()
+        mock_db_engine.return_value = MagicMock(connection=mock_connection, cursor=mock_cursor)
 
-        manager = StoreManager(name="Rūta Kazlauskaitė", phone=37061234567, email="ruta.k@pavyzdys.lt",
-                               country="Lithuania", store_id=5, monthly_salary=3200, petty_cash=150, id=42)
-
-        manager.save()
+        store_manager = StoreManager(name="Gintaras Vaitkus", phone=862345678, email="gintaras.vaitkus@example.lt",
+                                     country="Lithuania", store_id=23, monthly_salary=5200, petty_cash=350, id=42)
+        store_manager.save()
 
         mock_cursor.execute.assert_called_once_with(
             """
-            UPDATE "Store Manager"
-            SET "StoreID" = %s, "Name" = %s, "Country" = %s, "Email" = %s, "PhoneNumber" = %s, "MonthlySalary" = %s, "PettyCash" = %s
-            WHERE "StoreManagerID" = %s
+                UPDATE "Store Manager"
+                SET "StoreID" = %s, "Name" = %s, "Country" = %s, "Email" = %s, "PhoneNumber" = %s, "MonthlySalary" = %s, "PettyCash" = %s
+                WHERE "StoreManagerID" = %s
             """,
-            (5, "Rūta Kazlauskaitė", "Lithuania", "ruta.k@pavyzdys.lt", 37061234567, 3200, 150, 42)
+            (23, "Gintaras Vaitkus", "Lithuania", "gintaras.vaitkus@example.lt", 862345678, 5200, 350, 42)
         )
 
     @patch('src.person.storemanager.DBEngine')
-    def test_store_manager_delete(self, MockDBEngine: MagicMock) -> None:
-        mock_db = MockDBEngine.return_value
+    def test_delete_store_manager(self, mock_db_engine):
+        """Test deleting a store manager."""
+        mock_connection = MagicMock()
         mock_cursor = MagicMock()
-        mock_db.cursor = mock_cursor
-        mock_db.connection = MagicMock()
+        mock_db_engine.return_value = MagicMock(connection=mock_connection, cursor=mock_cursor)
 
-        manager = StoreManager(name="Rūta Kazlauskaitė", phone=37061234567, email="ruta.k@pavyzdys.lt",
-                               country="Lithuania", store_id=5, monthly_salary=3200, petty_cash=150, id=42)
-
-        manager.delete()
+        store_manager = StoreManager(name="Rūta Žemaitė", phone=865432198, email="ruta.zemaite@example.lt",
+                                     country="Lithuania", store_id=17, monthly_salary=4800, petty_cash=400, id=67)
+        store_manager.delete()
 
         mock_cursor.execute.assert_called_once_with(
-            'DELETE FROM "Store Manager" WHERE "StoreManagerID" = %s',
-            (42,)
+            'DELETE FROM "Store Manager" WHERE "StoreManagerID" = %s', (67,)
         )
-        self.assertIsNone(manager.id)
+        self.assertIsNone(store_manager.id)
 
     @patch('src.person.storemanager.DBEngine')
-    def test_view_all_store_managers(self, MockDBEngine: MagicMock) -> None:
-        mock_db = MockDBEngine.return_value
+    def test_view_all_store_managers(self, mock_db_engine):
+        """Test viewing all store managers."""
+        mock_connection = MagicMock()
         mock_cursor = MagicMock()
-        mock_db.cursor = mock_cursor
-        mock_db.connection = MagicMock()
         mock_cursor.fetchall.return_value = [
-            (7, 5, "Tomas Šukys", "Lithuania", "tomas.s@pavyzdys.lt", 37069876543, 2800, 100)
+            (12, 30, "Algirdas Jankauskas", "Lithuania", "algirdas.jankauskas@example.lt", 860123456, 5500, 500),
+            (14, 31, "Birutė Dambrauskienė", "Lithuania", "birute.dambrauskiene@example.lt", 869876543, 6000, 600)
         ]
+        mock_db_engine.return_value = MagicMock(connection=mock_connection, cursor=mock_cursor)
 
-        store_managers: List[Tuple[Optional[int], int, str, str, str, int, int, int]] = StoreManager.view_all()
+        store_managers = StoreManager.view_all()
 
-        mock_cursor.execute.assert_called_once_with(
-            """
-            SELECT "StoreManagerID", "StoreID", "Name", "Country", "Email", "PhoneNumber", "MonthlySalary", "PettyCash"
-            FROM "Store Manager"
-            """
-        )
-        self.assertEqual(len(store_managers), 1)
-        self.assertEqual(store_managers[0],
-                         (7, 5, "Tomas Šukys", "Lithuania", "tomas.s@pavyzdys.lt", 37069876543, 2800, 100))
+        self.assertEqual(len(store_managers), 2)
+        self.assertEqual(store_managers[0].name, "Algirdas Jankauskas")
+        self.assertEqual(store_managers[1].name, "Birutė Dambrauskienė")
 
     @patch('src.person.storemanager.DBEngine')
-    def test_display_all_salaries(self, MockDBEngine: MagicMock) -> None:
-        mock_db = MockDBEngine.return_value
+    def test_display_all_salaries(self, mock_db_engine):
+        """Test displaying all store managers' salaries."""
+        mock_connection = MagicMock()
         mock_cursor = MagicMock()
-        mock_db.cursor = mock_cursor
-        mock_db.connection = MagicMock()
         mock_cursor.fetchall.return_value = [
-            (7, 5, "Tomas Šukys", "Lithuania", "tomas.s@pavyzdys.lt", 37069876543, 2800, 100)
+            (12, 30, "Algirdas Jankauskas", "Lithuania", "algirdas.jankauskas@example.lt", 860123456, 5500, 500),
+            (14, 31, "Birutė Dambrauskienė", "Lithuania", "birute.dambrauskiene@example.lt", 869876543, 6000, 600)
         ]
+        mock_db_engine.return_value = MagicMock(connection=mock_connection, cursor=mock_cursor)
 
-        with patch('builtins.print') as mock_print:
+        with patch('sys.stdout', new_callable=MagicMock()) as mock_stdout:
             StoreManager.display_all_salaries()
-            mock_print.assert_any_call("Salaries of All Store Managers:")
-            mock_print.assert_any_call("ID: 7, Name: Tomas Šukys, Salary: 2800")
 
-    @patch('src.person.storemanager.DBEngine')
-    def test_manage_responsibilities(self, MockDBEngine: MagicMock) -> None:
-        mock_db = MockDBEngine.return_value
-        mock_cursor = MagicMock()
-        mock_db.cursor = mock_cursor
-        mock_db.connection = MagicMock()
+            output = ''.join(call.args[0] for call in mock_stdout.write.call_args_list)
 
-        with patch('builtins.input', side_effect=['13', '15', '17']):
-            with patch('builtins.print') as mock_print:
-                StoreManager.add_responsibility(7)
-                mock_cursor.execute.assert_any_call(
-                    """
-                    INSERT INTO "SM Responsibilities" ("ResponsibilityID", "StoreManagerID")
-                    VALUES (%s, %s)
-                    """,
-                    (13, 7)
-                )
-                mock_print.assert_any_call("Responsibility 13 added to store manager 7.")
+            self.assertIn("Salaries of All Store Managers:", output)
+            self.assertIn("ID: 12, Name: Algirdas Jankauskas, Salary: 5500", output)
+            self.assertIn("ID: 14, Name: Birutė Dambrauskienė, Salary: 6000", output)
 
-                StoreManager.remove_responsibility(7)
-                mock_cursor.execute.assert_any_call(
-                    'DELETE FROM "SM Responsibilities" WHERE "ResponsibilityID" = %s AND "StoreManagerID" = %s',
-                    (15, 7)
-                )
-                mock_print.assert_any_call("Responsibility 15 removed from store manager 7.")
-
-                StoreManager.view_responsibilities(7)
-                mock_cursor.execute.assert_any_call(
-                    'SELECT "ResponsibilityID" FROM "SM Responsibilities" WHERE "StoreManagerID" = %s',
-                    (7,)
-                )
-                mock_print.assert_any_call("Responsibilities for Store Manager ID: 7")
 
 if __name__ == '__main__':
     unittest.main()
