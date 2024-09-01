@@ -5,6 +5,7 @@ class Person:
 
     def __init__(self, name: str, phone: int, email: str, country: str, id: Optional[int] = None) -> None:
         """Initialize a new person with the given details.
+
         Args:
             name (str): The name of the person.
             phone (int): The phone number of the person.
@@ -32,9 +33,8 @@ class Person:
         raise NotImplementedError("Subclasses should implement this method.")
 
     def __str__(self) -> str:
+        """Return a string representation of the person.
 
-        """
-        Return a string representation of the person.
         Returns:
             str: A string describing the person.
         """

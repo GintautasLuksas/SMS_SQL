@@ -1,5 +1,4 @@
-"""
-Unit tests for the `list_tables` function in the `list_tables.py` module.
+"""Unit tests for the `list_tables` function in the `list_tables.py` module.
 
 This script tests the functionality of listing database tables using the `list_tables` function,
 verifying that it correctly retrieves and outputs table names, and handles errors gracefully.
@@ -15,18 +14,14 @@ from unittest.mock import patch, MagicMock
 import psycopg2
 from io import StringIO
 from src.list_tables import list_tables
-from typing import Any
 
 
 class TestListTables(unittest.TestCase):
-    """
-    Test suite for the `list_tables` function.
-    """
+    """Test suite for the `list_tables` function."""
 
     @patch('src.list_tables.DBEngine')
     def test_list_tables_no_tables(self, mock_db_engine: MagicMock) -> None:
-        """
-        Test that `list_tables` handles the scenario where no tables are present.
+        """Test that `list_tables` handles the scenario where no tables are present.
 
         Simulates an empty database and verifies that the output is appropriate.
         """
@@ -44,8 +39,7 @@ class TestListTables(unittest.TestCase):
     @patch('src.list_tables.DBEngine')
     @patch('src.list_tables.logger')
     def test_list_tables_db_error(self, mock_logger: MagicMock, mock_db_engine: MagicMock) -> None:
-        """
-        Test that `list_tables` handles database errors gracefully.
+        """Test that `list_tables` handles database errors gracefully.
 
         Simulates a database error during the execution of the SQL query.
         """

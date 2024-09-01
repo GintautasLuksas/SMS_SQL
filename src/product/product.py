@@ -5,6 +5,15 @@ T = TypeVar('T', bound='Product')
 
 
 class Product:
+    """Base class representing a product.
+
+    Attributes:
+        name (str): The name of the product.
+        amount (int): The amount of the product.
+        price (int): The price of the product.
+        id (Optional[int]): The ID of the product, if available.
+    """
+
     def __init__(self, name: str, amount: int, price: int, id: Optional[int] = None) -> None:
         self.name = name
         self.amount = amount
@@ -34,6 +43,18 @@ class Product:
 
 
 class DryStorageItem(Product):
+    """Class representing a dry storage item.
+
+    Attributes:
+        name (str): The name of the item.
+        amount (int): The amount of the item.
+        price (int): The price of the item.
+        recipe_item (bool): Whether the item is used in a recipe.
+        chemical (bool): Whether the item is a chemical.
+        package_type (str): The type of package the item comes in.
+        id (Optional[int]): The ID of the item, if available.
+    """
+
     def __init__(
             self,
             name: str,
@@ -119,6 +140,17 @@ class DryStorageItem(Product):
 
 
 class FoodItem(Product):
+    """Class representing a food item.
+
+    Attributes:
+        name (str): The name of the item.
+        amount (int): The amount of the item.
+        price (int): The price of the item.
+        storage_condition (str): The condition required for storing the item.
+        expiry_date (str): The expiry date of the item in YYYY-MM-DD format.
+        id (Optional[int]): The ID of the item, if available.
+    """
+
     def __init__(
             self,
             name: str,

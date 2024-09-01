@@ -18,6 +18,7 @@ PORT = int(os.getenv('PORT', PORT))
 
 
 def write_to_env_file() -> None:
+    """Write the database connection details to the .env file."""
     os.makedirs(os.path.dirname(dotenv_path), exist_ok=True)
     with open(dotenv_path, 'w') as file:
         file.write(f"DB_NAME={DB_NAME}\n")
@@ -28,6 +29,7 @@ def write_to_env_file() -> None:
 
 
 def create_database_and_tables() -> None:
+    """Create the database and tables if connection information is complete."""
     if not all([DB_USERNAME, DB_PASSWORD]):
         print("Connection information is incomplete.")
         return
@@ -39,6 +41,7 @@ def create_database_and_tables() -> None:
 
 
 def database_management_menu() -> None:
+    """Display the database management menu and handle user choices."""
     global DB_USERNAME, DB_PASSWORD, HOST, PORT
 
     while True:

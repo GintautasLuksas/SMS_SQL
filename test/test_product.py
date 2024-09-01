@@ -5,16 +5,13 @@ from src.db_engine import DBEngine
 from typing import Optional
 
 class TestDryStorageItem(unittest.TestCase):
-    """
-    Test suite for the `DryStorageItem` class.
-    """
+    """Test suite for the DryStorageItem class."""
 
     @patch('src.product.product.DBEngine')
     def test_save_new_dry_storage_item(self, mock_db_engine: MagicMock) -> None:
-        """
-        Test that a new dry storage item is correctly saved and assigned an ID.
+        """Test saving a new dry storage item and assigning an ID.
 
-        Verifies that a new dry storage item is saved to the database, and checks if a new ID is returned.
+        Verifies that a new dry storage item is saved to the database and checks if a new ID is returned.
         """
         mock_connection = MagicMock()
         mock_cursor = MagicMock()
@@ -30,8 +27,7 @@ class TestDryStorageItem(unittest.TestCase):
 
     @patch('src.product.product.DBEngine')
     def test_delete_dry_storage_item(self, mock_db_engine: MagicMock) -> None:
-        """
-        Test that a dry storage item is correctly deleted from the database.
+        """Test deleting a dry storage item from the database.
 
         Verifies that an existing dry storage item is deleted from the database and checks if the ID is set to None.
         """
@@ -47,14 +43,11 @@ class TestDryStorageItem(unittest.TestCase):
         mock_cursor.execute.assert_called_once_with('DELETE FROM "Dry Storage Item" WHERE "DryStorageItemID" = %s', (1,))
 
 class TestFoodItem(unittest.TestCase):
-    """
-    Test suite for the `FoodItem` class.
-    """
+    """Test suite for the FoodItem class."""
 
     @patch('src.product.product.DBEngine')
     def test_view_all_food_items(self, mock_db_engine: MagicMock) -> None:
-        """
-        Test that all food items are correctly retrieved from the database.
+        """Test retrieving all food items from the database.
 
         Simulates retrieval of multiple food items from the database and checks the output list for correct entries.
         """
@@ -75,8 +68,7 @@ class TestFoodItem(unittest.TestCase):
 
     @patch('src.product.product.DBEngine')
     def test_find_food_item_by_id(self, mock_db_engine: MagicMock) -> None:
-        """
-        Test that a food item is correctly retrieved by ID.
+        """Test finding a food item by ID.
 
         Simulates finding a food item by ID and checks if the correct item is returned with all attributes properly set.
         """

@@ -1,8 +1,9 @@
-from typing import List, Tuple, Optional
+from typing import Optional
 from src.db_engine import DBEngine
 from src.person.person import Person
 
 class Worker(Person):
+    """This is Worker class which is added through Person class."""
     def __init__(self, name: str, phone: int, email: str, country: str,
                  hourly_rate: int, amount_worked: int, store_id: int, id: Optional[int] = None) -> None:
         super().__init__(name, phone, email, country, id)
@@ -11,15 +12,18 @@ class Worker(Person):
         self.store_id = store_id
 
     def display_salary(self) -> None:
-        """
-        Display the salary of the worker.
+        """Display the salary of the worker.
+
+        Calculate and print the salary based on hourly rate and amount worked.
         """
         salary = self.hourly_rate * self.amount_worked
         print(f'{self.name}\'s salary is: {salary}')
 
     def save(self) -> None:
-        """
-        Save or update the worker in the database.
+        """Save or update the worker in the database.
+
+        If the worker does not have an ID, create a new worker record. Otherwise,
+        update the existing worker record.
         """
         if self.id is None:
             self._create_worker()
@@ -27,8 +31,10 @@ class Worker(Person):
             self._update_worker()
 
     def _create_worker(self) -> None:
-        """
-        Create a new worker record in the database.
+        """Create a new worker record in the database.
+
+        Insert a new worker record and set the worker's ID based on the database's
+        auto-generated ID.
         """
         db = DBEngine()
         if db.cursor is None or db.connection is None:
@@ -53,8 +59,9 @@ class Worker(Person):
                 db.connection.close()
 
     def _update_worker(self) -> None:
-        """
-        Update an existing worker record in the database.
+        """Update an existing worker record in the database.
+
+        Modify the details of an existing worker record based on the worker's ID.
         """
         db = DBEngine()
         if db.cursor is None or db.connection is None:
@@ -79,8 +86,9 @@ class Worker(Person):
                 db.connection.close()
 
     def delete(self) -> None:
-        """
-        Delete the worker record from the database.
+        """Delete the worker record from the database.
+
+        Remove the worker record from the database based on the worker's ID.
         """
         if self.id is not None:
             db = DBEngine()
@@ -104,17 +112,16 @@ class Worker(Person):
             print("Worker ID is not set.")
 
     @classmethod
-    def view_all(cls) -> List[Tuple[int, str, int, str, str, int, int, int]]:
-        """
-        View all workers in the database.
+    def view_all(cls) -> None:
+        """View all workers in the database and print them.
 
-        Returns:
-            List[Tuple[int, str, int, str, str, int, int, int]]: List of worker records.
+        Fetch all worker records from the database and print them. If no workers
+        are found, print a corresponding message.
         """
         db = DBEngine()
         if db.cursor is None or db.connection is None:
             print("Database connection not established.")
-            return []
+            return
 
         try:
             db.cursor.execute("""
@@ -122,10 +129,15 @@ class Worker(Person):
                 FROM "Worker"
             """)
             workers = db.cursor.fetchall()
-            return workers
+            if workers:
+                print("List of Workers:")
+                for worker in workers:
+                    print(f"ID: {worker[0]}, Name: {worker[1]}, Phone: {worker[2]}, Email: {worker[3]}, Country: {worker[4]}, "
+                          f"Hourly Rate: {worker[5]}, Amount Worked: {worker[6]}, Store ID: {worker[7]}")
+            else:
+                print("No workers found.")
         except Exception as e:
             print(f"Error retrieving workers: {e}")
-            return []
         finally:
             if db.cursor:
                 db.cursor.close()
@@ -134,22 +146,27 @@ class Worker(Person):
 
     @classmethod
     def display_all_salaries(cls) -> None:
-        """
-        Display salaries of all workers.
+        """Display salaries of all workers.
+
+        Retrieve all workers and print their salaries based on hourly rate and amount
+        worked. This method assumes `view_all` prints workers as well.
         """
         workers = cls.view_all()
         if workers:
             print("Salaries of All Workers:")
             for w in workers:
-                salary = w[5] * w[6]  # HourlyRate * AmountWorked
+                salary = w[5] * w[6]
                 print(f"ID: {w[0]}, Name: {w[1]}, Salary: {salary}")
         else:
             print("No workers found.")
 
     @classmethod
     def manage_workers(cls) -> None:
-        """
-        Display the worker management menu and handle user input.
+        """Display the worker management menu and handle user input.
+
+        Provide a menu for managing workers, including adding, editing, deleting,
+        viewing, and displaying salaries. The loop continues until the user chooses
+        to exit.
         """
         while True:
             print("\nWorker Management Menu")
@@ -179,8 +196,10 @@ class Worker(Person):
 
     @classmethod
     def add_worker(cls) -> None:
-        """
-        Add a new worker based on user input.
+        """Add a new worker based on user input.
+
+        Prompt the user for worker details and create a new worker. Handle input
+        validation and potential errors.
         """
         try:
             name = input("Enter worker's name: ").strip()
@@ -199,8 +218,10 @@ class Worker(Person):
 
     @classmethod
     def edit_worker(cls) -> None:
-        """
-        Edit an existing worker based on user input.
+        """Edit an existing worker based on user input.
+
+        Allow the user to modify details of an existing worker by providing the worker's
+        ID. Update the worker's information in the database.
         """
         try:
             worker_id = int(input("Enter the ID of the worker to edit: ").strip())
@@ -240,26 +261,23 @@ class Worker(Person):
 
     @classmethod
     def delete_worker(cls) -> None:
-        """
-        Delete a worker based on user input.
+        """Delete a worker based on user input.
+
+        Prompt the user for the worker's ID and delete the corresponding worker
+        from the database.
         """
         try:
             worker_id = int(input("Enter the ID of the worker to delete: ").strip())
-            worker = cls(name='', phone=0, email='', country='', hourly_rate=0, amount_worked=0, store_id=0, id=worker_id)
+            worker = cls('', 0, '', '', 0, 0, 0, worker_id)
             worker.delete()
+            print("Worker deleted successfully.")
         except ValueError:
-            print("Invalid input. Please enter a valid ID.")
+            print("Invalid input. Please enter the correct data type.")
 
     @classmethod
     def view_all_workers(cls) -> None:
+        """View all workers by calling the `view_all` method.
+
+        Fetch and print all worker records by invoking the `view_all` method.
         """
-        Display all workers.
-        """
-        workers = cls.view_all()
-        if workers:
-            print("List of Workers:")
-            for worker in workers:
-                print(f"ID: {worker[0]}, Name: {worker[1]}, Phone: {worker[2]}, Email: {worker[3]}, Country: {worker[4]}, "
-                      f"Hourly Rate: {worker[5]}, Amount Worked: {worker[6]}, Store ID: {worker[7]}")
-        else:
-            print("No workers found.")
+        cls.view_all()

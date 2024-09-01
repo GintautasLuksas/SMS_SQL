@@ -3,14 +3,11 @@ from unittest.mock import patch, MagicMock
 from src.db_engine import DBEngine
 
 class TestDBEngine(unittest.TestCase):
-    """
-    Test suite for the DBEngine class.
-    """
+    """Test suite for the DBEngine class."""
 
     @patch('src.db_engine.psycopg2.connect')
     def test_connection_established(self, mock_connect: MagicMock) -> None:
-        """
-        Test that a connection is established when DBEngine is initialized.
+        """Test that a connection is established when DBEngine is initialized.
 
         Args:
             mock_connect (MagicMock): Mock object for psycopg2.connect.
@@ -27,8 +24,7 @@ class TestDBEngine(unittest.TestCase):
 
     @patch('src.db_engine.psycopg2.connect')
     def test_connection_closed(self, mock_connect: MagicMock) -> None:
-        """
-        Test that the connection and cursor are properly closed.
+        """Test that the connection and cursor are properly closed.
 
         Args:
             mock_connect (MagicMock): Mock object for psycopg2.connect.

@@ -1,15 +1,3 @@
-"""
-Unit tests for the `Store` class in the `store.py` module.
-
-This script tests the functionality of CRUD operations on the `Store` class,
-ensuring correct interactions with the database.
-
-Pre-commit best practices:
-- Ensure imports are sorted and used properly.
-- Include clear, concise docstrings for each test case.
-- Avoid long lines and enforce PEP8 compliance.
-"""
-
 import unittest
 from unittest.mock import patch, MagicMock
 from src.store.store import Store
@@ -17,16 +5,13 @@ from src.db_engine import DBEngine
 from typing import List, Tuple, Optional
 
 class TestStore(unittest.TestCase):
-    """
-    Test suite for the `Store` class.
-    """
+    """Test suite for the Store class."""
 
     @patch('src.store.store.DBEngine')
     def test_create_new_store(self, mock_db_engine: MagicMock) -> None:
-        """
-        Test that a new store is correctly created and assigned an ID.
+        """Test creating a new store and assigning an ID.
 
-        Verifies that a new store is saved to the database, and checks if a new ID is returned.
+        Verifies that a new store is saved to the database and checks if a new ID is returned.
         """
         mock_connection = MagicMock()
         mock_cursor = MagicMock()
@@ -42,8 +27,7 @@ class TestStore(unittest.TestCase):
 
     @patch('src.store.store.DBEngine')
     def test_delete_store(self, mock_db_engine: MagicMock) -> None:
-        """
-        Test that a store is correctly deleted from the database.
+        """Test deleting a store from the database.
 
         Verifies that an existing store is deleted from the database and checks if the ID is set to None.
         """
@@ -60,8 +44,7 @@ class TestStore(unittest.TestCase):
 
     @patch('src.store.store.DBEngine')
     def test_view_all_stores(self, mock_db_engine: MagicMock) -> None:
-        """
-        Test that all stores are correctly retrieved from the database.
+        """Test retrieving all stores from the database.
 
         Simulates retrieval of multiple stores from the database and checks the output list for correct entries.
         """

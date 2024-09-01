@@ -11,9 +11,7 @@ dotenv_path = os.path.join(os.path.dirname(__file__), '../config/.env')
 load_dotenv(dotenv_path=dotenv_path)
 
 def list_tables() -> None:
-
-    """
-    Retrieves and prints the names of all tables in the public schema of the PostgreSQL database.
+    """Retrieve and print the names of all tables in the public schema of the PostgreSQL database.
 
     This function connects to the database using the DBEngine class, executes a query to retrieve
     the list of table names, and then prints each table name. If an error occurs during the process,

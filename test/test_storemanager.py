@@ -2,7 +2,6 @@ import unittest
 from unittest.mock import patch, MagicMock
 from src.person.storemanager import StoreManager
 
-
 class TestStoreManager(unittest.TestCase):
     """Test suite for the `StoreManager` class."""
 
@@ -65,7 +64,8 @@ class TestStoreManager(unittest.TestCase):
         self.assertIsNone(store_manager.id)
 
     @patch('src.person.storemanager.DBEngine')
-    def test_view_all_store_managers(self, mock_db_engine: MagicMock) -> None:
+    @patch('sys.stdout', new_callable=MagicMock)
+    def test_view_all_store_managers(self, mock_stdout: MagicMock, mock_db_engine: MagicMock) -> None:
         """Test viewing all store managers."""
         mock_connection = MagicMock()
         mock_cursor = MagicMock()
@@ -75,14 +75,15 @@ class TestStoreManager(unittest.TestCase):
         ]
         mock_db_engine.return_value = MagicMock(connection=mock_connection, cursor=mock_cursor)
 
-        store_managers = StoreManager.view_all()
+        StoreManager.view_all()
 
-        self.assertEqual(len(store_managers), 2)
-        self.assertEqual(store_managers[0].name, "Algirdas Jankauskas")
-        self.assertEqual(store_managers[1].name, "Birutė Dambrauskienė")
+        output = ''.join(call.args[0] for call in mock_stdout.write.call_args_list)
+        self.assertIn("ID: 12, StoreID: 30, Name: Algirdas Jankauskas, Country: Lithuania, Email: algirdas.jankauskas@example.lt, Phone: 860123456, Salary: 5500, Petty Cash: 500", output)
+        self.assertIn("ID: 14, StoreID: 31, Name: Birutė Dambrauskienė, Country: Lithuania, Email: birute.dambrauskiene@example.lt, Phone: 869876543, Salary: 6000, Petty Cash: 600", output)
 
     @patch('src.person.storemanager.DBEngine')
-    def test_display_all_salaries(self, mock_db_engine: MagicMock) -> None:
+    @patch('sys.stdout', new_callable=MagicMock)
+    def test_display_all_salaries(self, mock_stdout: MagicMock, mock_db_engine: MagicMock) -> None:
         """Test displaying all store managers' salaries."""
         mock_connection = MagicMock()
         mock_cursor = MagicMock()
@@ -92,15 +93,12 @@ class TestStoreManager(unittest.TestCase):
         ]
         mock_db_engine.return_value = MagicMock(connection=mock_connection, cursor=mock_cursor)
 
-        with patch('sys.stdout', new_callable=MagicMock()) as mock_stdout:
-            StoreManager.display_all_salaries()
+        StoreManager.display_all_salaries()
 
-            output = ''.join(call.args[0] for call in mock_stdout.write.call_args_list)
-
-            self.assertIn("Salaries of All Store Managers:", output)
-            self.assertIn("ID: 12, Name: Algirdas Jankauskas, Salary: 5500", output)
-            self.assertIn("ID: 14, Name: Birutė Dambrauskienė, Salary: 6000", output)
-
+        output = ''.join(call.args[0] for call in mock_stdout.write.call_args_list)
+        self.assertIn("Salaries of All Store Managers:", output)
+        self.assertIn("ID: 12, Name: Algirdas Jankauskas, Salary: 5500", output)
+        self.assertIn("ID: 14, Name: Birutė Dambrauskienė, Salary: 6000", output)
 
 if __name__ == '__main__':
     unittest.main()

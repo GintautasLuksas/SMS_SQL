@@ -2,8 +2,9 @@ import unittest
 from unittest.mock import patch, MagicMock
 from src.person.manager import Manager
 
-
 class TestManager(unittest.TestCase):
+    """Test suite for the Manager class."""
+
     @patch('src.person.manager.DBEngine')
     def test_create_manager(self, mock_db_engine: MagicMock) -> None:
         """Test creating a new manager."""
@@ -21,12 +22,10 @@ class TestManager(unittest.TestCase):
         )
         manager.save()
 
-
         expected_sql = " ".join((
             "INSERT INTO \"Manager\" (\"Name\", \"PhoneNumber\", \"Email\", \"Country\", \"MonthlySalary\", \"StoreID\")",
             "VALUES (%s, %s, %s, %s, %s, %s) RETURNING \"ManagerID\""
         )).strip()
-
 
         actual_sql = " ".join(mock_db_instance.cursor.execute.call_args[0][0].split()).strip()
 
@@ -53,7 +52,6 @@ class TestManager(unittest.TestCase):
         )
         manager.save()
 
-
         expected_sql = " ".join((
             "UPDATE \"Manager\"",
             "SET \"Name\" = %s, \"PhoneNumber\" = %s, \"Email\" = %s, \"Country\" = %s,",
@@ -61,7 +59,6 @@ class TestManager(unittest.TestCase):
             "WHERE \"ManagerID\" = %s"
         )).strip()
 
-        # Strip whitespace from actual SQL query string
         actual_sql = " ".join(mock_db_instance.cursor.execute.call_args[0][0].split()).strip()
 
         self.assertEqual(actual_sql, expected_sql)
@@ -94,7 +91,8 @@ class TestManager(unittest.TestCase):
         mock_db_instance.connection.commit.assert_called_once()
 
     @patch('src.person.manager.DBEngine')
-    def test_view_all_managers(self, mock_db_engine: MagicMock) -> None:
+    @patch('builtins.print')
+    def test_view_all_managers(self, mock_print: MagicMock, mock_db_engine: MagicMock) -> None:
         """Test viewing all managers."""
         mock_db_instance = MagicMock()
         mock_db_engine.return_value.__enter__.return_value = mock_db_instance
@@ -102,12 +100,15 @@ class TestManager(unittest.TestCase):
             (49, 'Petras', 37064999999, 'petras@example.com', 'Latvia', 1800, 5)
         ]
 
-        managers = Manager.view_all()
-        self.assertEqual(len(managers), 1)
-        self.assertEqual(managers[0][0], 49)
+        Manager.view_all()
+
+        # Verify that the print function was called with the expected output
+        mock_print.assert_any_call("List of Managers:")
+        mock_print.assert_any_call("ID: 49, Name: Petras, Phone: 37064999999, Email: petras@example.com, Country: Latvia, Monthly Salary: 1800, Store ID: 5")
 
     @patch('src.person.manager.DBEngine')
-    def test_display_all_salaries(self, mock_db_engine: MagicMock) -> None:
+    @patch('builtins.print')
+    def test_display_all_salaries(self, mock_print: MagicMock, mock_db_engine: MagicMock) -> None:
         """Test displaying all managers' salaries."""
         mock_db_instance = MagicMock()
         mock_db_engine.return_value.__enter__.return_value = mock_db_instance
@@ -115,11 +116,10 @@ class TestManager(unittest.TestCase):
             (49, 'Petras', 37064999999, 'petras@example.com', 'Latvia', 1800, 5)
         ]
 
-        with patch('builtins.print') as mock_print:
-            Manager.display_all_salaries()
-            mock_print.assert_any_call("Salaries of All Managers:")
-            mock_print.assert_any_call("ID: 49, Name: Petras, Salary: 1800")
+        Manager.display_all_salaries()
 
+        mock_print.assert_any_call("Salaries of All Managers:")
+        mock_print.assert_any_call("ID: 49, Name: Petras, Salary: 1800")
 
 if __name__ == '__main__':
     unittest.main()

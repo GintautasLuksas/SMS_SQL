@@ -1,15 +1,15 @@
-"""
-Responsibilities management module.
+"""Responsibilities management module.
 
-This module defines the `Responsibilities` class for managing responsibilities in the database
+This module defines the Responsibilities class for managing responsibilities in the database
 and provides methods to add, remove, and view responsibilities.
 """
 
 from typing import Optional, List
 from src.db_engine import DBEngine
 
-
 class Responsibilities:
+    """Class for managing responsibilities in the database."""
+
     def __init__(self, responsibility_id: Optional[int] = None, responsibility_name: Optional[str] = None) -> None:
         self.responsibility_id = responsibility_id
         self.responsibility_name = responsibility_name
@@ -143,7 +143,6 @@ class Responsibilities:
             cursor.close()
             connection.close()
 
-
 def responsibilities_menu() -> None:
     """Responsibilities management menu with all options."""
     while True:
@@ -172,13 +171,11 @@ def responsibilities_menu() -> None:
         else:
             print("Invalid choice, please select between 1 and 6.")
 
-
 def add_responsibility() -> None:
     """Add a new responsibility to the database."""
     responsibility_name = input("Enter the responsibility name: ").strip()
     responsibility = Responsibilities(responsibility_name=responsibility_name)
     responsibility.save()
-
 
 def remove_responsibility() -> None:
     """Remove a responsibility from the database."""
@@ -189,7 +186,6 @@ def remove_responsibility() -> None:
     except ValueError:
         print("Invalid ID. Please enter a number.")
 
-
 def assign_responsibility_to_manager() -> None:
     """Assign a responsibility to a store manager."""
     try:
@@ -199,7 +195,6 @@ def assign_responsibility_to_manager() -> None:
     except ValueError:
         print("Invalid input. Please enter numbers.")
 
-
 def remove_responsibility_from_manager() -> None:
     """Remove a responsibility from a store manager."""
     try:
@@ -208,7 +203,6 @@ def remove_responsibility_from_manager() -> None:
         Responsibilities.remove_sm_responsibility(responsibility_id, store_manager_id)
     except ValueError:
         print("Invalid input. Please enter numbers.")
-
 
 def view_responsibilities() -> None:
     """View all responsibilities."""

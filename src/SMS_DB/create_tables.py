@@ -3,13 +3,10 @@ import logging
 from src.db_engine import DBEngine
 import psycopg2
 
-
 def create_tables() -> None:
-    """
-    Creates the necessary tables in the database by executing SQL commands
-    from a specified SQL file.
+    """Create the necessary tables in the database.
 
-    The function connects to the database using the DBEngine class, reads SQL
+    This function connects to the database using the DBEngine class, reads SQL
     commands from the 'SMS_tables.sql' file, and executes them to create tables.
     If the table creation is successful, a success message is logged. If an
     error occurs, it is logged, the transaction is rolled back, and the error
@@ -38,7 +35,6 @@ def create_tables() -> None:
         if db_engine.connection:
             db_engine.connection.rollback()
         raise
-
 
 if __name__ == '__main__':
     create_tables()

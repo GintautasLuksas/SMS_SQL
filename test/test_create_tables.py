@@ -1,36 +1,21 @@
-"""
-Unit tests for the `create_tables` function in the `create_tables.py` module.
-
-This script tests the creation of database tables by verifying that the SQL commands
-are executed correctly and that the tables exist in the database after running the function.
-
-Pre-commit best practices:
-- Ensure imports are sorted and used properly.
-- Include clear, concise docstrings for each test case.
-- Avoid long lines and enforce PEP8 compliance.
-"""
-
 import unittest
-import os
+from unittest import mock
 import psycopg2
-from unittest import mock  # Updated import for mock
 from src.SMS_DB.create_tables import create_tables
 from src.db_engine import DBEngine
 from typing import Any, ClassVar
 
 
 class TestCreateTables(unittest.TestCase):
-    """
-    Test suite for `create_tables` function.
-    """
+    """Test suite for the `create_tables` function."""
+
     db_engine: ClassVar[DBEngine]
     cursor: ClassVar[Any]
     connection: ClassVar[Any]
 
     @classmethod
     def setUpClass(cls) -> None:
-        """
-        Set up the test environment.
+        """Set up the test environment.
 
         Creates a database connection and initializes the necessary preconditions
         before any test methods are run.
@@ -41,10 +26,10 @@ class TestCreateTables(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls) -> None:
-        """
-        Tear down the test environment.
+        """Tear down the test environment.
 
-        Closes the database connection and cleans up resources after all test methods have run.
+        Closes the database connection and cleans up resources after all test methods
+        have run.
         """
         if cls.cursor:
             cls.cursor.close()
@@ -52,24 +37,22 @@ class TestCreateTables(unittest.TestCase):
             cls.connection.close()
 
     def setUp(self) -> None:
-        """
-        Initialize test case setup.
+        """Initialize test case setup.
 
         Ensures that the database is in a clean state before each test.
         """
         self.clear_database()
 
     def tearDown(self) -> None:
-        """
-        Clean up after each test case.
+        """Clean up after each test case.
 
-        Ensures that changes made by the test are rolled back and the database is reset.
+        Ensures that changes made by the test are rolled back and the database is
+        reset.
         """
         self.clear_database()
 
     def clear_database(self) -> None:
-        """
-        Helper method to remove all tables from the database.
+        """Helper method to remove all tables from the database.
 
         Ensures a clean state for testing table creation.
         """
@@ -89,10 +72,10 @@ class TestCreateTables(unittest.TestCase):
             print(f"Error clearing database: {e}")
 
     def test_create_tables_success(self) -> None:
-        """
-        Test that the `create_tables` function creates all necessary tables successfully.
+        """Test that the `create_tables` function creates all necessary tables successfully.
 
-        Verifies that the SQL commands run without errors and the expected tables are created.
+        Verifies that the SQL commands run without errors and the expected tables
+        are created.
         """
         try:
             create_tables()
@@ -110,12 +93,11 @@ class TestCreateTables(unittest.TestCase):
             self.fail(f"create_tables() raised an exception: {error}")
 
     def test_create_tables_error_handling(self) -> None:
-        """
-        Test that `create_tables` function handles errors gracefully.
+        """Test that the `create_tables` function handles errors gracefully.
 
-        Simulates a failure in table creation and checks if the transaction is rolled back properly.
+        Simulates a failure in table creation and checks if the transaction is
+        rolled back properly.
         """
-        # Simulate an error scenario
         with mock.patch('psycopg2.connect') as mock_connect:
             mock_connect.side_effect = psycopg2.OperationalError("Simulated connection error")
             with self.assertRaises(psycopg2.OperationalError):

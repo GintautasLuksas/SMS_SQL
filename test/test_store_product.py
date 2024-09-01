@@ -1,5 +1,4 @@
-"""
-Unit tests for the `StoreDryProduct` and `StoreFoodProduct` classes in `store_product.py`.
+"""Unit tests for the `StoreDryProduct` and `StoreFoodProduct` classes in `store_product.py`.
 
 This script tests the functionality of adding, removing, and viewing products in a store,
 ensuring correct interactions with the database.
@@ -16,14 +15,11 @@ from src.store.store_product import StoreDryProduct, StoreFoodProduct
 
 
 class TestStoreDryProduct(unittest.TestCase):
-    """
-    Test suite for the `StoreDryProduct` class.
-    """
+    """Test suite for the `StoreDryProduct` class."""
 
     @patch('src.store.store_product.DBEngine')
     def test_add_dry_storage_item_to_store(self, mock_db_engine: MagicMock) -> None:
-        """
-        Test adding a dry storage item to a store.
+        """Test adding a dry storage item to a store.
 
         Verifies that the item is correctly added to the database.
         """
@@ -35,16 +31,15 @@ class TestStoreDryProduct(unittest.TestCase):
 
         mock_cursor.execute.assert_called_once_with(
             """
-                        INSERT INTO "StoreDryProduct" ("StoreID", "DryStorageID")
-                        VALUES (%s, %s)
-                    """,
+            INSERT INTO "StoreDryProduct" ("StoreID", "DryStorageID")
+            VALUES (%s, %s)
+            """,
             (1, 2)
         )
 
     @patch('src.store.store_product.DBEngine')
     def test_remove_dry_storage_item_from_store(self, mock_db_engine: MagicMock) -> None:
-        """
-        Test removing a dry storage item from a store.
+        """Test removing a dry storage item from a store.
 
         Verifies that the item is correctly removed from the database.
         """
@@ -56,16 +51,15 @@ class TestStoreDryProduct(unittest.TestCase):
 
         mock_cursor.execute.assert_called_once_with(
             """
-                        DELETE FROM "StoreDryProduct"
-                        WHERE "StoreID" = %s AND "DryStorageID" = %s
-                    """,
+            DELETE FROM "StoreDryProduct"
+            WHERE "StoreID" = %s AND "DryStorageID" = %s
+            """,
             (1, 2)
         )
 
     @patch('src.store.store_product.DBEngine')
     def test_view_dry_storage_items_in_store(self, mock_db_engine: MagicMock) -> None:
-        """
-        Test viewing dry storage items in a store.
+        """Test viewing dry storage items in a store.
 
         Verifies that the correct items are retrieved from the database.
         """
@@ -85,14 +79,11 @@ class TestStoreDryProduct(unittest.TestCase):
 
 
 class TestStoreFoodProduct(unittest.TestCase):
-    """
-    Test suite for the `StoreFoodProduct` class.
-    """
+    """Test suite for the `StoreFoodProduct` class."""
 
     @patch('src.store.store_product.DBEngine')
     def test_add_food_item_to_store(self, mock_db_engine: MagicMock) -> None:
-        """
-        Test adding a food item to a store.
+        """Test adding a food item to a store.
 
         Verifies that the item is correctly added to the database.
         """
@@ -104,16 +95,15 @@ class TestStoreFoodProduct(unittest.TestCase):
 
         mock_cursor.execute.assert_called_once_with(
             """
-                        INSERT INTO "StoreFoodProduct" ("StoreID", "FoodID")
-                        VALUES (%s, %s)
-                    """,
+            INSERT INTO "StoreFoodProduct" ("StoreID", "FoodID")
+            VALUES (%s, %s)
+            """,
             (1, 2)
         )
 
     @patch('src.store.store_product.DBEngine')
     def test_remove_food_item_from_store(self, mock_db_engine: MagicMock) -> None:
-        """
-        Test removing a food item from a store.
+        """Test removing a food item from a store.
 
         Verifies that the item is correctly removed from the database.
         """
@@ -125,16 +115,15 @@ class TestStoreFoodProduct(unittest.TestCase):
 
         mock_cursor.execute.assert_called_once_with(
             """
-                        DELETE FROM "StoreFoodProduct"
-                        WHERE "StoreID" = %s AND "FoodID" = %s
-                    """,
+            DELETE FROM "StoreFoodProduct"
+            WHERE "StoreID" = %s AND "FoodID" = %s
+            """,
             (1, 2)
         )
 
     @patch('src.store.store_product.DBEngine')
     def test_view_food_items_in_store(self, mock_db_engine: MagicMock) -> None:
-        """
-        Test viewing food items in a store.
+        """Test viewing food items in a store.
 
         Verifies that the correct items are retrieved from the database.
         """
