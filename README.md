@@ -56,28 +56,31 @@ SMS_SQL/
 ├── requirements.txt                     # Python dependencies
 └── SQL_SMS.png                          # Database schema diagram
 ```
-Key Directories and Files
-config/: Contains configuration files like .env which stores environment variables required for database connectivity.
+### Key Directories and Files
 
-myenv/: Virtual environment directory, which should not be included in version control to keep the environment isolated.
+- **`config/`**: Contains configuration files, including `.env` for storing environment variables needed for database connectivity.
 
-src/: Main source directory for your application, containing subdirectories for various modules:
+- **`myenv/`**: Virtual environment directory (excluded from version control) to keep project dependencies isolated.
 
-SMS_DB/: Handles database operations such as creating and managing tables.
-person/: Contains classes and functionalities related to personnel management.
-product/: Manages different types of products like food and dry storage items.
-store/: Manages store-specific operations including store details and inventory.
-test/: This directory includes test modules to ensure the functionality and reliability of the application components.
+- **`src/`**: Main source directory with subdirectories for different modules:
+  - **`SMS_DB/`**: Scripts for creating and managing database tables.
+  - **`person/`**: Modules for personnel management.
+  - **`product/`**: Classes for managing various product types (e.g., food, dry storage items).
+  - **`store/`**: Handles store operations, including store details and inventory.
 
-Root Files:
+- **`test/`**: Contains test modules to ensure the functionality and reliability of the application.
 
-.gitignore: Specifies files and directories to ignore in Git.
-.pre-commit-config.yaml: Configuration for Git pre-commit hooks to enforce coding standards and check for errors before committing changes.
-mypy.ini: Configuration for static type checking using MyPy.
-README.md: Documentation file that provides an overview of the project, setup instructions, and usage guidelines.
-requirements.txt: Lists all Python packages required to run the project.
-SQL_SMS.png: Visual representation of the database schema.
-This structure provides a clear and organized layout for your project, making it easy to navigate and maintain.
+#### Root Files
+
+- **`.gitignore`**: Lists files and directories to be ignored by Git.
+- **`.pre-commit-config.yaml`**: Configuration for pre-commit hooks to enforce code standards and checks.
+- **`mypy.ini`**: Settings for MyPy static type checking.
+- **`README.md`**: Documentation with an overview, setup instructions, and usage guidelines.
+- **`requirements.txt`**: Lists Python dependencies for the project.
+- **`SQL_SMS.png`**: Diagram of the database schema.
+
+This structure helps maintain a clean and organized project layout, making it easier to navigate and manage.
+
 
 
 ## Installation
