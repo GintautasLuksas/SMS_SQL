@@ -82,66 +82,80 @@ This structure provides a clear and organized layout for your project, making it
 
 ## Installation
 
-To set up the project, follow these steps:
+Project Installation
+Follow these steps to set up and run the Store Management System (SMS_SQL) on your local machine:
 
-1. **Clone the repository:**
+Clone the Repository:
 
-    ```sh
-    git clone <repository-url>
-    ```
+Start by cloning the repository to your local machine. Open a terminal or command prompt and run:
 
-2. **Navigate into the project directory:**
+bash
+Kopijuoti kodą
+git clone https://github.com/GintautasLuksas/SMS_SQL.git
+cd SMS_SQL
+Set Up a Virtual Environment:
 
-    ```sh
-    cd SMS_SQL
-    ```
+It is recommended to use a virtual environment to manage your project’s dependencies. To create and activate a virtual environment, run the following commands:
 
-3. **Create and activate a virtual environment:**
+bash
+Kopijuoti kodą
+python -m venv myenv
+Activate the virtual environment:
 
-    ```sh
-    python -m venv myenv
-    source myenv/bin/activate  # On Windows use `myenv\Scripts\activate`
-    ```
+On Windows:
 
-4. **Install the required dependencies:**
+bash
+Kopijuoti kodą
+myenv\Scripts\activate
+On macOS and Linux:
 
-    ```sh
-    pip install -r requirements.txt
-    ```
+bash
+Kopijuoti kodą
+source myenv/bin/activate
+Install the Required Dependencies:
 
-5. **Configure the environment variables:**
+With the virtual environment activated, install the required Python packages listed in the requirements.txt file:
 
-    Ensure that the `.env` file in the `config/` directory is properly set up with the necessary environment variables.
+bash
+Kopijuoti kodą
+pip install -r requirements.txt
+Configure Environment Variables:
 
-## Usage
+The project uses a .env file to manage environment variables for database connectivity. You need to create this file in the config directory:
 
-To run the main application, execute the `main.py` script:
+bash
+Kopijuoti kodą
+touch config/.env
+Open .env in a text editor and add your PostgreSQL database connection details:
 
-```sh
+makefile
+Kopijuoti kodą
+DB_NAME=your_db_name
+DB_USERNAME=your_db_username
+DB_PASSWORD=your_db_password
+HOST=your_db_host
+PORT=your_db_port
+Replace your_db_name, your_db_username, your_db_password, your_db_host, and your_db_port with your actual database credentials.
+
+Set Up the Database:
+
+Initialize the PostgreSQL database and create the necessary tables by running the create_tables.py script:
+
+bash
+Kopijuoti kodą
+python src/SMS_DB/create_tables.py
+This script will connect to your PostgreSQL database using the credentials provided in the .env file and execute the SQL commands to set up the database schema.
+
+Run the Application:
+
+Now, you can start the Store Management System application:
+
+bash
+Kopijuoti kodą
 python src/main.py
-This will start the interactive menu-driven interface for managing different entities.
+This command will launch the main program, allowing you to interact with the application through the command-line interface.
 
-Testing
-To run the tests for the project, use pytest. Ensure that your virtual environment is active and then run:
-
-sh
-Copy code
-pytest
-This will execute all test cases defined in the test/ directory.
-
-Modules
-src/base_table.py: Defines base functionalities for table management.
-src/db_engine.py: Manages the database engine connection.
-src/list_tables.py: Lists and manages various tables.
-src/tables/: Contains specific table management modules:
-dry_storage_table.py
-food_table.py
-manager_table.py
-manager_responsibilities_table.py
-responsibilities_table.py
-sm_responsibilities_table.py
-store_table.py
-store_manager_table.py
-store_dry_product_table.py
-store_food_product_table.py
-worker_table.py
+Additional Notes
+Database Configuration: Ensure that your PostgreSQL database server is running and accessible with the credentials specified in the .env file.
+Virtual Environment: Always activate your virtual environment before running the application or any scripts to ensure the correct dependencies are used.
+Dependencies: If you add or update any Python packages, remember to update requirements.txt using pip freeze > requirements.txt and commit the changes to the repository.
