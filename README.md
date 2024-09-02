@@ -88,48 +88,29 @@ Follow these steps to set up and run the Store Management System (SMS_SQL) on yo
 Clone the Repository:
 
 Start by cloning the repository to your local machine. Open a terminal or command prompt and run:
-
-bash
-Kopijuoti kodą
 git clone https://github.com/GintautasLuksas/SMS_SQL.git
 cd SMS_SQL
+
 Set Up a Virtual Environment:
-
 It is recommended to use a virtual environment to manage your project’s dependencies. To create and activate a virtual environment, run the following commands:
-
-bash
-Kopijuoti kodą
 python -m venv myenv
 Activate the virtual environment:
 
 On Windows:
-
-bash
-Kopijuoti kodą
 myenv\Scripts\activate
-On macOS and Linux:
 
-bash
-Kopijuoti kodą
+On macOS and Linux:
 source myenv/bin/activate
 Install the Required Dependencies:
 
 With the virtual environment activated, install the required Python packages listed in the requirements.txt file:
-
-bash
-Kopijuoti kodą
 pip install -r requirements.txt
+
 Configure Environment Variables:
-
 The project uses a .env file to manage environment variables for database connectivity. You need to create this file in the config directory:
-
-bash
-Kopijuoti kodą
 touch config/.env
-Open .env in a text editor and add your PostgreSQL database connection details:
 
-makefile
-Kopijuoti kodą
+Open .env in a text editor and add your PostgreSQL database connection details:
 DB_NAME=your_db_name
 DB_USERNAME=your_db_username
 DB_PASSWORD=your_db_password
@@ -138,20 +119,12 @@ PORT=your_db_port
 Replace your_db_name, your_db_username, your_db_password, your_db_host, and your_db_port with your actual database credentials.
 
 Set Up the Database:
-
 Initialize the PostgreSQL database and create the necessary tables by running the create_tables.py script:
-
-bash
-Kopijuoti kodą
 python src/SMS_DB/create_tables.py
 This script will connect to your PostgreSQL database using the credentials provided in the .env file and execute the SQL commands to set up the database schema.
 
 Run the Application:
-
 Now, you can start the Store Management System application:
-
-bash
-Kopijuoti kodą
 python src/main.py
 This command will launch the main program, allowing you to interact with the application through the command-line interface.
 
