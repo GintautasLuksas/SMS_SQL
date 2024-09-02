@@ -55,8 +55,7 @@ SMS_SQL/
 ├── README.md                            # Project documentation
 ├── requirements.txt                     # Python dependencies
 └── SQL_SMS.png                          # Database schema diagram
-
-plaintext```
+```
 Key Directories and Files
 config/: Contains configuration files like .env which stores environment variables required for database connectivity.
 
