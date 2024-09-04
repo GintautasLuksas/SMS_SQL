@@ -167,22 +167,26 @@ Follow these steps to set up and run the Store Management System (SMS_SQL) on yo
 
 Here’s a version of the descriptions for both the class diagram and database (DB) diagram formatted with bold text to fit nicely in your README.md:
 
-Diagrams
-Class Diagram
-The SMS Class Diagram illustrates the object-oriented structure of the system, defining the various classes, their attributes, methods, and the relationships between them. The main components include:
+## Diagrams
 
-Person: A base class representing individuals within the system with attributes such as Name, Country, Email, and Phone number. It serves as a parent class for specific roles such as Worker and Manager.
-Worker: A subclass of Person with additional attributes like Hourly Rate and Amount worked, and methods for displaying rate, hours, and salary, tailored to manage worker-specific functionalities.
-Manager: Another subclass of Person that includes attributes like Monthly salary and Responsibility, and methods for displaying salary and manager-specific information.
-Store Manager: A specialized class extending Person, managing store-specific details such as Monthly salary, Store Name, Responsibilities, and Petty cash, with methods for handling various store manager tasks.
-Store: Represents a store entity, containing attributes for the store's name, lists of workers and managers, and inventory (Stock). Methods are provided to manage people and inventory within the store.
-Product, Food, and Dry Storage: Classes representing different product types in the system. Product serves as a base class with methods for adding, removing, and displaying products, while Food and Dry Storage classes extend Product to handle specific product characteristics.
-Database (DB) Diagram
-The SMS_SQL DB Diagram provides a detailed overview of the database schema, including tables, their fields, data types, and the relationships between them. Key components of the database include:
+### Class Diagram
 
-Store Manager: A table that stores information about store managers, such as StoreManagerID, Name, Country, Email, Phone number, Monthly salary, Petty cash, and StoreID which links to the Store table.
-Manager: Contains details about store managers, including ManagerID, Name, Phone number, Country, Email, Monthly salary, ResponsibilityID, and StoreID. It links to the Store table through StoreID.
-Worker: Holds data about workers with fields like WorkerID, Name, Phone number, Email, Country, Hourly Rate, Amount worked, and StoreID linking to the Store table.
-Store: The central table representing a store, with fields like StoreID and StoreName. It is connected to multiple tables, including Manager, Worker, StoreFoodProduct, and StoreDryProduct.
-Product-Related Tables (StoreFoodProduct, StoreDryProduct, Food_item, Dry_storage_item): These tables manage the inventory of food and dry storage items within a store, including fields for item ID, name, amount, price, and storage conditions.
-Responsibilities and SM Responsibilities: These tables define various responsibilities assigned to store managers and other personnel, with foreign key relationships linking them to the respective manager and store tables.
+The **SMS Class Diagram** illustrates the object-oriented structure of the system, defining the various classes, their attributes, methods, and the relationships between them. The main components include:
+
+- **`Person`**: A base class representing individuals within the system with attributes such as **`Name`**, **`Country`**, **`Email`**, and **`Phone number`**. It serves as a parent class for specific roles such as **`Worker`** and **`Manager`**.
+- **`Worker`**: A subclass of **`Person`** with additional attributes like **`Hourly Rate`** and **`Amount worked`**, and methods for displaying rate, hours, and salary, tailored to manage worker-specific functionalities.
+- **`Manager`**: Another subclass of **`Person`** that includes attributes like **`Monthly salary`** and **`Responsibility`**, and methods for displaying salary and manager-specific information.
+- **`Store Manager`**: A specialized class extending **`Person`**, managing store-specific details such as **`Monthly salary`**, **`Store Name`**, **`Responsibilities`**, and **`Petty cash`**, with methods for handling various store manager tasks.
+- **`Store`**: Represents a store entity, containing attributes for the store's name, lists of workers and managers, and inventory (**`Stock`**). Methods are provided to manage people and inventory within the store.
+- **`Product, Food, and Dry Storage`**: Classes representing different product types in the system. **`Product`** serves as a base class with methods for adding, removing, and displaying products, while **`Food`** and **`Dry Storage`** classes extend **`Product`** to handle specific product characteristics.
+
+### Database (DB) Diagram
+
+The **SMS_SQL DB Diagram** provides a detailed overview of the database schema, including tables, their fields, data types, and the relationships between them. Key components of the database include:
+
+- **`Store Manager`**: A table that stores information about store managers, such as **`StoreManagerID`**, **`Name`**, **`Country`**, **`Email`**, **`Phone number`**, **`Monthly salary`**, **`Petty cash`**, and **`StoreID`** which links to the **`Store`** table.
+- **`Manager`**: Contains details about store managers, including **`ManagerID`**, **`Name`**, **`Phone number`**, **`Country`**, **`Email`**, **`Monthly salary`**, **`ResponsibilityID`**, and **`StoreID`**. It links to the **`Store`** table through **`StoreID`**.
+- **`Worker`**: Holds data about workers with fields like **`WorkerID`**, **`Name`**, **`Phone number`**, **`Email`**, **`Country`**, **`Hourly Rate`**, **`Amount worked`**, and **`StoreID`** linking to the **`Store`** table.
+- **`Store`**: The central table representing a store, with fields like **`StoreID`** and **`StoreName`**. It is connected to multiple tables, including **`Manager`**, **`Worker`**, **`StoreFoodProduct`**, and **`StoreDryProduct`**.
+- **Product-Related Tables** (**`StoreFoodProduct`**, **`StoreDryProduct`**, **`Food_item`**, **`Dry_storage_item`**): These tables manage the inventory of food and dry storage items within a store, including fields for item ID, name, amount, price, and storage conditions.
+- **`Responsibilities`** and **`SM Responsibilities`**: These tables define various responsibilities assigned to store managers and other personnel, with foreign key relationships linking them to the respective manager and store tables.
