@@ -164,9 +164,6 @@ Follow these steps to set up and run the Store Management System (SMS_SQL) on yo
 - **Dependencies**: If you add or update any Python packages, remember to update `requirements.txt` using `pip freeze > requirements.txt` and commit the changes to the repository.
 
 
-
-Here’s a version of the descriptions for both the class diagram and database (DB) diagram formatted with bold text to fit nicely in your README.md:
-
 ## Diagrams
 
 ### Class Diagram
