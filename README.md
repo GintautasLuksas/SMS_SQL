@@ -190,15 +190,14 @@ The **SMS_SQL DB Diagram** provides a detailed overview of the database schema, 
 
 - ### Project Status
 
-- At this momment project is half done. With basic functions for Store, people and product managment.
-- Program is working through DB. It can create DB called SMS and create tables within it. After this implementation it is possible to do several things through menu:
+At this momment project is half done. With basic functions for Store, people and product managment.Program is working through DB. It can create DB called SMS and create tables within it. After this implementation it is possible to do several things through menu:
 - **Add, remove, edit people**
 -  **Add, remove, edit products**
 -  **Add remove, edit stores**
 -  **Change edit .env details**
 -  **Import DB and tables if they are not currently active**
-- 
-- There is plenty areas to imrpove:
+
+There is plenty areas to imrpove:
 - **GUI**
 - **Logging menu for security purposes**
 - **More features into Store Managment System can be added**
