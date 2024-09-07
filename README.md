@@ -167,6 +167,7 @@ Follow these steps to set up and run the Store Management System (SMS_SQL) on yo
 ## Diagrams
 
 ### Class Diagram
+![SMS Class Diagram](https://github.com/GintautasLuksas/SMS_SQL/blob/main/SMS%20Class%20Diagram.png)
 
 The **SMS Class Diagram** illustrates the object-oriented structure of the system, defining the various classes, their attributes, methods, and the relationships between them. The main components include:
 
@@ -178,6 +179,8 @@ The **SMS Class Diagram** illustrates the object-oriented structure of the syste
 - **`Product, Food, and Dry Storage`**: Classes representing different product types in the system. **`Product`** serves as a base class with methods for adding, removing, and displaying products, while **`Food`** and **`Dry Storage`** classes extend **`Product`** to handle specific product characteristics.
 
 ### Database (DB) Diagram
+
+![Database Diagram SMS SQL](https://github.com/GintautasLuksas/SMS_SQL/blob/main/Database%20Diagram%20SMS_SQL.png)
 
 The **SMS_SQL DB Diagram** provides a detailed overview of the database schema, including tables, their fields, data types, and the relationships between them. Key components of the database include:
 
