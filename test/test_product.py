@@ -1,92 +1,190 @@
-import unittest
+import pytest
 from unittest.mock import patch, MagicMock
+from typing import Tuple
 from src.product.product import DryStorageItem, FoodItem
-from src.db_engine import DBEngine
-from typing import Optional
 
-class TestDryStorageItem(unittest.TestCase):
-    """Test suite for the DryStorageItem class."""
+def normalize_sql(sql: str) -> str:
+    """Utility function to normalize SQL strings by stripping unnecessary spaces."""
+    return ' '.join(sql.split())
 
-    @patch('src.product.product.DBEngine')
-    def test_save_new_dry_storage_item(self, mock_db_engine: MagicMock) -> None:
-        """Test saving a new dry storage item and assigning an ID.
+def test_add_dry_storage_item() -> None:
+    """Test adding a new DryStorageItem."""
+    with patch('src.product.product.DBEngine') as mock_db_engine:
+        mock_instance = MagicMock()
+        mock_db_engine.return_value.__enter__.return_value = mock_instance
+        mock_cursor = mock_instance.cursor
+        mock_cursor.fetchone.return_value = [1]
 
-        Verifies that a new dry storage item is saved to the database and checks if a new ID is returned.
-        """
-        mock_connection = MagicMock()
-        mock_cursor = MagicMock()
-        mock_cursor.fetchone.return_value = [1]  # Simulate returning new ID
-        mock_db_engine.return_value.connection = mock_connection
-        mock_db_engine.return_value.cursor = mock_cursor
-
-        item = DryStorageItem(name="Flour", amount=50, price=100, recipe_item=True, chemical=False, package_type="Bag")
+        item = DryStorageItem(name="Test Item", amount=10, price=100, recipe_item=True, chemical=False, package_type="Box")
         item.save()
 
-        self.assertEqual(item.id, 1)
-        mock_cursor.execute.assert_called_once()
-
-    @patch('src.product.product.DBEngine')
-    def test_delete_dry_storage_item(self, mock_db_engine: MagicMock) -> None:
-        """Test deleting a dry storage item from the database.
-
-        Verifies that an existing dry storage item is deleted from the database and checks if the ID is set to None.
+        expected_sql = """
+            INSERT INTO "Dry Storage Item" ("Name", "Amount", "Price", "RecipeItem", "Chemical", "PackageType")
+            VALUES (%s, %s, %s, %s, %s, %s)
+            RETURNING "DryStorageItemID"
         """
-        mock_connection = MagicMock()
-        mock_cursor = MagicMock()
-        mock_db_engine.return_value.connection = mock_connection
-        mock_db_engine.return_value.cursor = mock_cursor
+        actual_sql = mock_cursor.execute.call_args[0][0]  # Get the SQL query string from the mock call
+        assert normalize_sql(expected_sql) == normalize_sql(actual_sql)
 
-        item = DryStorageItem(name="Flour", amount=50, price=100, recipe_item=True, chemical=False, package_type="Bag", id=1)
+        assert mock_cursor.execute.call_args[0][1] == ("Test Item", 10, 100, True, False, "Box")
+        assert item.id == 1
+
+def test_update_dry_storage_item() -> None:
+    """Test updating an existing DryStorageItem."""
+    with patch('src.product.product.DBEngine') as mock_db_engine:
+        mock_instance = MagicMock()
+        mock_db_engine.return_value.__enter__.return_value = mock_instance
+        mock_cursor = mock_instance.cursor
+
+        item = DryStorageItem(name="Old Item", amount=5, price=50, recipe_item=False, chemical=True, package_type="Bag", id=2)
+        item.name = "Updated Item"
+        item.save()
+
+        expected_sql = """
+            UPDATE "Dry Storage Item"
+            SET "Name" = %s, "Amount" = %s, "Price" = %s, "RecipeItem" = %s, "Chemical" = %s, "PackageType" = %s
+            WHERE "DryStorageItemID" = %s
+        """
+        actual_sql = mock_cursor.execute.call_args[0][0]  # Get the SQL query string from the mock call
+        assert normalize_sql(expected_sql) == normalize_sql(actual_sql)
+
+        assert mock_cursor.execute.call_args[0][1] == ("Updated Item", 5, 50, False, True, "Bag", 2)
+
+def test_view_all_dry_storage_items() -> None:
+    """Test viewing all DryStorageItems."""
+    with patch('src.product.product.DBEngine') as mock_db_engine:
+        mock_instance = MagicMock()
+        mock_db_engine.return_value.__enter__.return_value = mock_instance
+        mock_cursor = mock_instance.cursor
+        mock_cursor.fetchall.return_value = [
+            (1, "Item 1", 10, 100, True, False, "Box"),
+            (2, "Item 2", 20, 200, False, True, "Bag")
+        ]
+
+        items = DryStorageItem.view_all()
+
+        assert items is not None
+        assert len(items) == 2
+        assert items[0].name == "Item 1"
+        assert items[1].name == "Item 2"
+
+def test_find_by_id_dry_storage_item() -> None:
+    """Test finding a DryStorageItem by ID."""
+    with patch('src.product.product.DBEngine') as mock_db_engine:
+        mock_instance = MagicMock()
+        mock_db_engine.return_value.__enter__.return_value = mock_instance
+        mock_cursor = mock_instance.cursor
+        mock_cursor.fetchone.return_value = (1, "Item 1", 10, 100, True, False, "Box")
+
+        item = DryStorageItem.find_by_id(1)
+
+        assert item is not None
+        assert item.name == "Item 1"
+        assert item.id == 1
+
+def test_delete_dry_storage_item() -> None:
+    """Test deleting a DryStorageItem."""
+    with patch('src.product.product.DBEngine') as mock_db_engine:
+        mock_instance = MagicMock()
+        mock_db_engine.return_value.__enter__.return_value = mock_instance
+        mock_cursor = mock_instance.cursor
+
+        item = DryStorageItem(name="Item to Delete", amount=5, price=50, recipe_item=False, chemical=False, package_type="Box", id=3)
         item.delete()
 
-        self.assertIsNone(item.id)
-        mock_cursor.execute.assert_called_once_with('DELETE FROM "Dry Storage Item" WHERE "DryStorageItemID" = %s', (1,))
+        mock_cursor.execute.assert_called_once_with(
+            'DELETE FROM "Dry Storage Item" WHERE "DryStorageItemID" = %s',
+            (3,)
+        )
+        assert item.id is None
 
-class TestFoodItem(unittest.TestCase):
-    """Test suite for the FoodItem class."""
+def test_add_food_item() -> None:
+    """Test adding a new FoodItem."""
+    with patch('src.product.product.DBEngine') as mock_db_engine:
+        mock_instance = MagicMock()
+        mock_db_engine.return_value.__enter__.return_value = mock_instance
+        mock_cursor = mock_instance.cursor
+        mock_cursor.fetchone.return_value = [1]
 
-    @patch('src.product.product.DBEngine')
-    def test_view_all_food_items(self, mock_db_engine: MagicMock) -> None:
-        """Test retrieving all food items from the database.
+        item = FoodItem(name="Test Food", amount=10, price=200, storage_condition="Cool", expiry_date="2025-01-01")
+        item.save()
 
-        Simulates retrieval of multiple food items from the database and checks the output list for correct entries.
+        expected_sql = """
+            INSERT INTO "Food Item" ("Name", "Amount", "Price", "StorageCondition", "ExpiryDate")
+            VALUES (%s, %s, %s, %s, %s)
+            RETURNING "FoodItemID"
         """
-        mock_connection = MagicMock()
-        mock_cursor = MagicMock()
+        actual_sql = mock_cursor.execute.call_args[0][0]  # Get the SQL query string from the mock call
+        assert normalize_sql(expected_sql) == normalize_sql(actual_sql)
+
+        assert mock_cursor.execute.call_args[0][1] == ("Test Food", 10, 200, "Cool", "2025-01-01")
+        assert item.id == 1
+
+def test_update_food_item() -> None:
+    """Test updating an existing FoodItem."""
+    with patch('src.product.product.DBEngine') as mock_db_engine:
+        mock_instance = MagicMock()
+        mock_db_engine.return_value.__enter__.return_value = mock_instance
+        mock_cursor = mock_instance.cursor
+
+        item = FoodItem(name="Old Food", amount=5, price=150, storage_condition="Warm", expiry_date="2024-12-31", id=2)
+        item.name = "Updated Food"
+        item.save()
+
+        expected_sql = """
+            UPDATE "Food Item"
+            SET "Name" = %s, "Amount" = %s, "Price" = %s, "StorageCondition" = %s, "ExpiryDate" = %s
+            WHERE "FoodItemID" = %s
+        """
+        actual_sql = mock_cursor.execute.call_args[0][0]  # Get the SQL query string from the mock call
+        assert normalize_sql(expected_sql) == normalize_sql(actual_sql)
+
+        assert mock_cursor.execute.call_args[0][1] == ("Updated Food", 5, 150, "Warm", "2024-12-31", 2)
+
+def test_view_all_food_items() -> None:
+    """Test viewing all FoodItems."""
+    with patch('src.product.product.DBEngine') as mock_db_engine:
+        mock_instance = MagicMock()
+        mock_db_engine.return_value.__enter__.return_value = mock_instance
+        mock_cursor = mock_instance.cursor
         mock_cursor.fetchall.return_value = [
-            (1, "Apple", 10, 5, "Cool", "2024-12-31"),
-            (2, "Bread", 20, 3, "Dry", "2024-11-30")
+            (1, "Food 1", 10, 200, "Cool", "2025-01-01"),
+            (2, "Food 2", 20, 300, "Warm", "2024-12-31")
         ]
-        mock_db_engine.return_value.connection = mock_connection
-        mock_db_engine.return_value.cursor = mock_cursor
 
         items = FoodItem.view_all()
 
-        self.assertEqual(len(items), 2)
-        self.assertEqual(items[0].name, "Apple")
-        self.assertEqual(items[1].name, "Bread")
+        assert items is not None
+        assert len(items) == 2
+        assert items[0].name == "Food 1"
+        assert items[1].name == "Food 2"
 
-    @patch('src.product.product.DBEngine')
-    def test_find_food_item_by_id(self, mock_db_engine: MagicMock) -> None:
-        """Test finding a food item by ID.
+def test_find_by_id_food_item() -> None:
+    """Test finding a FoodItem by ID."""
+    with patch('src.product.product.DBEngine') as mock_db_engine:
+        mock_instance = MagicMock()
+        mock_db_engine.return_value.__enter__.return_value = mock_instance
+        mock_cursor = mock_instance.cursor
+        mock_cursor.fetchone.return_value = (1, "Food 1", 10, 200, "Cool", "2025-01-01")
 
-        Simulates finding a food item by ID and checks if the correct item is returned with all attributes properly set.
-        """
-        mock_connection = MagicMock()
-        mock_cursor = MagicMock()
-        mock_cursor.fetchone.return_value = (1, "Apple", 10, 5, "Cool", "2024-12-31")
-        mock_db_engine.return_value.connection = mock_connection
-        mock_db_engine.return_value.cursor = mock_cursor
+        item = FoodItem.find_by_id(1)
 
-        item: Optional[FoodItem] = FoodItem.find_by_id(1)
+        assert item is not None
+        assert item.name == "Food 1"
+        assert item.id == 1
 
-        self.assertIsNotNone(item)
-        if item:
-            self.assertEqual(item.name, "Apple")
-            self.assertEqual(item.amount, 10)
-            self.assertEqual(item.price, 5)
-            self.assertEqual(item.storage_condition, "Cool")
-            self.assertEqual(item.expiry_date, "2024-12-31")
+def test_delete_food_item() -> None:
+    """Test deleting a FoodItem."""
+    with patch('src.product.product.DBEngine') as mock_db_engine:
+        mock_instance = MagicMock()
+        mock_db_engine.return_value.__enter__.return_value = mock_instance
+        mock_cursor = mock_instance.cursor
 
-if __name__ == '__main__':
-    unittest.main()
+        item = FoodItem(name="Food to Delete", amount=5, price=150, storage_condition="Warm", expiry_date="2024-12-31", id=3)
+        item.delete()
+
+        mock_cursor.execute.assert_called_once_with(
+            'DELETE FROM "Food Item" WHERE "FoodItemID" = %s',
+            (3,)
+        )
+        assert item.id is None

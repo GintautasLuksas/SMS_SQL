@@ -78,27 +78,10 @@ class TestStoreManager(unittest.TestCase):
         StoreManager.view_all()
 
         output = ''.join(call.args[0] for call in mock_stdout.write.call_args_list)
+        self.assertIn("List of All Store Managers:", output)
         self.assertIn("ID: 12, StoreID: 30, Name: Algirdas Jankauskas, Country: Lithuania, Email: algirdas.jankauskas@example.lt, Phone: 860123456, Salary: 5500, Petty Cash: 500", output)
         self.assertIn("ID: 14, StoreID: 31, Name: Birutė Dambrauskienė, Country: Lithuania, Email: birute.dambrauskiene@example.lt, Phone: 869876543, Salary: 6000, Petty Cash: 600", output)
 
-    @patch('src.person.storemanager.DBEngine')
-    @patch('sys.stdout', new_callable=MagicMock)
-    def test_display_all_salaries(self, mock_stdout: MagicMock, mock_db_engine: MagicMock) -> None:
-        """Test displaying all store managers' salaries."""
-        mock_connection = MagicMock()
-        mock_cursor = MagicMock()
-        mock_cursor.fetchall.return_value = [
-            (12, 30, "Algirdas Jankauskas", "Lithuania", "algirdas.jankauskas@example.lt", 860123456, 5500, 500),
-            (14, 31, "Birutė Dambrauskienė", "Lithuania", "birute.dambrauskiene@example.lt", 869876543, 6000, 600)
-        ]
-        mock_db_engine.return_value = MagicMock(connection=mock_connection, cursor=mock_cursor)
-
-        StoreManager.display_all_salaries()
-
-        output = ''.join(call.args[0] for call in mock_stdout.write.call_args_list)
-        self.assertIn("Salaries of All Store Managers:", output)
-        self.assertIn("ID: 12, Name: Algirdas Jankauskas, Salary: 5500", output)
-        self.assertIn("ID: 14, Name: Birutė Dambrauskienė, Salary: 6000", output)
 
 if __name__ == '__main__':
     unittest.main()

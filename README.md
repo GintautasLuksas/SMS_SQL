@@ -87,7 +87,7 @@ This structure helps maintain a clean and organized project layout, making it ea
 
 Follow these steps to set up and run the Store Management System (SMS_SQL) on your local machine:
 
-1. **Clone the Repository**:  
+1. **Clone the Repository**:
    Start by cloning the repository to your local machine. Open a terminal or command prompt and run:
 
    ```bash
@@ -95,7 +95,7 @@ Follow these steps to set up and run the Store Management System (SMS_SQL) on yo
    cd SMS_SQL
    ```
 
-2. **Set Up a Virtual Environment**:  
+2. **Set Up a Virtual Environment**:
    It is recommended to use a virtual environment to manage your project’s dependencies. To create and activate a virtual environment, run the following commands:
 
    ```bash
@@ -113,14 +113,14 @@ Follow these steps to set up and run the Store Management System (SMS_SQL) on yo
      source myenv/bin/activate
      ```
 
-3. **Install the Required Dependencies**:  
+3. **Install the Required Dependencies**:
    With the virtual environment activated, install the required Python packages listed in the `requirements.txt` file:
 
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Configure Environment Variables**:  
+4. **Configure Environment Variables**:
    The project uses a `.env` file to manage environment variables for database connectivity. Create this file in the `config` directory:
 
    ```bash
@@ -139,7 +139,7 @@ Follow these steps to set up and run the Store Management System (SMS_SQL) on yo
 
    Replace `your_db_name`, `your_db_username`, `your_db_password`, `your_db_host`, and `your_db_port` with your actual database credentials.
 
-5. **Set Up the Database**:  
+5. **Set Up the Database**:
    Initialize the PostgreSQL database and create the necessary tables by running the `create_tables.py` script:
 
    ```bash
@@ -148,7 +148,7 @@ Follow these steps to set up and run the Store Management System (SMS_SQL) on yo
 
    This script connects to your PostgreSQL database using the credentials provided in the `.env` file and executes the SQL commands to set up the database schema.
 
-6. **Run the Application**:  
+6. **Run the Application**:
    Now, you can start the Store Management System application:
 
    ```bash
@@ -162,6 +162,7 @@ Follow these steps to set up and run the Store Management System (SMS_SQL) on yo
 - **Database Configuration**: Ensure that your PostgreSQL database server is running and accessible with the credentials specified in the `.env` file.
 - **Virtual Environment**: Always activate your virtual environment before running the application or any scripts to ensure the correct dependencies are used.
 - **Dependencies**: If you add or update any Python packages, remember to update `requirements.txt` using `pip freeze > requirements.txt` and commit the changes to the repository.
+<<<<<<< Updated upstream
 
 
 ## Diagrams
@@ -204,3 +205,5 @@ There is plenty areas to imrpove:
 - **GUI**
 - **Logging menu for security purposes**
 - **More features into Store Managment System can be added**
+=======
+>>>>>>> Stashed changes

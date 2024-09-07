@@ -5,7 +5,6 @@ from src.SMS_DB.create_tables import create_tables
 from src.db_engine import DBEngine
 from typing import Any, ClassVar
 
-
 class TestCreateTables(unittest.TestCase):
     """Test suite for the `create_tables` function."""
 

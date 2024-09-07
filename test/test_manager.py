@@ -1,13 +1,12 @@
-import unittest
-from unittest.mock import patch, MagicMock
+import pytest
+from unittest.mock import MagicMock, patch
 from src.person.manager import Manager
+from typing import Tuple
 
-class TestManager(unittest.TestCase):
-    """Test suite for the Manager class."""
 
-    @patch('src.person.manager.DBEngine')
-    def test_create_manager(self, mock_db_engine: MagicMock) -> None:
-        """Test creating a new manager."""
+def test_create_manager() -> None:
+    """Test creating a new manager."""
+    with patch('src.person.manager.DBEngine') as mock_db_engine:
         mock_db_instance = MagicMock()
         mock_db_engine.return_value.__enter__.return_value = mock_db_instance
         mock_db_instance.cursor.fetchone.return_value = [49]
@@ -29,15 +28,16 @@ class TestManager(unittest.TestCase):
 
         actual_sql = " ".join(mock_db_instance.cursor.execute.call_args[0][0].split()).strip()
 
-        self.assertEqual(actual_sql, expected_sql)
+        assert actual_sql == expected_sql
         mock_db_instance.cursor.execute.assert_called_once_with(
             mock_db_instance.cursor.execute.call_args[0][0],
             ('Petras', 37064999999, 'petras@example.com', 'Latvia', 1800, 5)
         )
 
-    @patch('src.person.manager.DBEngine')
-    def test_update_manager(self, mock_db_engine: MagicMock) -> None:
-        """Test updating an existing manager."""
+
+def test_update_manager() -> None:
+    """Test updating an existing manager."""
+    with patch('src.person.manager.DBEngine') as mock_db_engine:
         mock_db_instance = MagicMock()
         mock_db_engine.return_value.__enter__.return_value = mock_db_instance
 
@@ -61,15 +61,16 @@ class TestManager(unittest.TestCase):
 
         actual_sql = " ".join(mock_db_instance.cursor.execute.call_args[0][0].split()).strip()
 
-        self.assertEqual(actual_sql, expected_sql)
+        assert actual_sql == expected_sql
         mock_db_instance.cursor.execute.assert_called_once_with(
             mock_db_instance.cursor.execute.call_args[0][0],
             ('Petras', 37064999999, 'petras@example.com', 'Latvia', 1800, 5, 49)
         )
 
-    @patch('src.person.manager.DBEngine')
-    def test_delete_manager(self, mock_db_engine: MagicMock) -> None:
-        """Test deleting a manager."""
+
+def test_delete_manager() -> None:
+    """Test deleting a manager."""
+    with patch('src.person.manager.DBEngine') as mock_db_engine:
         mock_db_instance = MagicMock()
         mock_db_engine.return_value.__enter__.return_value = mock_db_instance
 
@@ -90,10 +91,10 @@ class TestManager(unittest.TestCase):
         )
         mock_db_instance.connection.commit.assert_called_once()
 
-    @patch('src.person.manager.DBEngine')
-    @patch('builtins.print')
-    def test_view_all_managers(self, mock_print: MagicMock, mock_db_engine: MagicMock) -> None:
-        """Test viewing all managers."""
+
+def test_view_all_managers(capsys: pytest.CaptureFixture[str]) -> None:
+    """Test viewing all managers."""
+    with patch('src.person.manager.DBEngine') as mock_db_engine:
         mock_db_instance = MagicMock()
         mock_db_engine.return_value.__enter__.return_value = mock_db_instance
         mock_db_instance.cursor.fetchall.return_value = [
@@ -102,14 +103,14 @@ class TestManager(unittest.TestCase):
 
         Manager.view_all()
 
-        # Verify that the print function was called with the expected output
-        mock_print.assert_any_call("List of Managers:")
-        mock_print.assert_any_call("ID: 49, Name: Petras, Phone: 37064999999, Email: petras@example.com, Country: Latvia, Monthly Salary: 1800, Store ID: 5")
+        captured = capsys.readouterr()
+        assert "List of All Managers:" in captured.out
+        assert "ID: 49, Name: Petras, Phone: 37064999999, Email: petras@example.com, Country: Latvia, Salary: 1800, Store ID: 5" in captured.out
 
-    @patch('src.person.manager.DBEngine')
-    @patch('builtins.print')
-    def test_display_all_salaries(self, mock_print: MagicMock, mock_db_engine: MagicMock) -> None:
-        """Test displaying all managers' salaries."""
+
+def test_display_all_salaries(capsys: pytest.CaptureFixture[str]) -> None:
+    """Test displaying all managers' salaries."""
+    with patch('src.person.manager.DBEngine') as mock_db_engine:
         mock_db_instance = MagicMock()
         mock_db_engine.return_value.__enter__.return_value = mock_db_instance
         mock_db_instance.cursor.fetchall.return_value = [
@@ -118,8 +119,6 @@ class TestManager(unittest.TestCase):
 
         Manager.display_all_salaries()
 
-        mock_print.assert_any_call("Salaries of All Managers:")
-        mock_print.assert_any_call("ID: 49, Name: Petras, Salary: 1800")
-
-if __name__ == '__main__':
-    unittest.main()
+        captured = capsys.readouterr()
+        assert "List of All Managers:" in captured.out
+        assert "ID: 49, Name: Petras, Phone: 37064999999, Email: petras@example.com, Country: Latvia, Salary: 1800, Store ID: 5" in captured.out
