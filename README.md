@@ -205,5 +205,3 @@ There is plenty areas to imrpove:
 - **GUI**
 - **Logging menu for security purposes**
 - **More features into Store Managment System can be added**
-=======
->>>>>>> Stashed changes
