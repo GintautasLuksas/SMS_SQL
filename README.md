@@ -1,4 +1,4 @@
-# SMS_SQL
+ # SMS_SQL
 
 ## Project Overview
 
@@ -201,7 +201,7 @@ At this momment project is half done. With basic functions for Store, people and
 -  **Change edit .env details**
 -  **Import DB and tables if they are not currently active**
 
-There is plenty areas to imrpove:
+There is plenty areas to improve:
 - **GUI**
 - **Logging menu for security purposes**
 - **More features into Store Managment System can be added**
